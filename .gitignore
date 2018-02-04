@@ -1,0 +1,9 @@
+#Binaries should not be pushed
+tests/exec_tests
+lib
+#Temporary cmake files should not be pushed
+#user has to generate this files by himself
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+Makefile
