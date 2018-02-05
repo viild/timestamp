@@ -1,5 +1,5 @@
 #Binaries should not be pushed
-tests/exec_tests
+tests/bins
 lib
 #Temporary cmake files should not be pushed
 #user has to generate this files by himself
@@ -7,3 +7,9 @@ CMakeCache.txt
 CMakeFiles
 cmake_install.cmake
 Makefile
+tests/CMakeCache.txt
+tests/CMakeFiles
+tests/cmake_install.cmake
+tests/Makefile
+Testing
+CTestTestfile.cmake
