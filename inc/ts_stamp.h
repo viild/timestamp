@@ -1,5 +1,5 @@
-#ifndef STAMP_H_
-#define STAMP_H_
+#ifndef TS_STAMP_H_
+#define TS_STAMP_H_
 
 #include <cstring>
 #include <string>
@@ -26,4 +26,4 @@ public:
 
 } // namespace timestamp
 
-#endif /* STAMP_H_ */
+#endif /* TS_STAMP_H_ */

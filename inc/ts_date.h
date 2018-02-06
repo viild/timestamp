@@ -1,5 +1,5 @@
-#ifndef DATE_H_
-#define DATE_H_
+#ifndef TS_DATE_H_
+#define TS_DATE_H_
 
 #include <chrono>
 #include "ts_stamp.h"
@@ -21,4 +21,4 @@ private:
 
 } // namespace timestamp
 
-#endif /* DATE_H_ */
+#endif /* TS_DATE_H_ */

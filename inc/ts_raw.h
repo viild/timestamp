@@ -1,5 +1,5 @@
-#ifndef RAW_H_
-#define RAW_H_
+#ifndef TS_RAW_H_
+#define TS_RAW_H_
 
 #include "ts_stamp.h"
 
@@ -15,4 +15,4 @@ public:
 
 } // namespace timestamp
 
-#endif /* RAW_H_ */
+#endif /* TS_RAW_H_ */

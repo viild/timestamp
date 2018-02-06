@@ -1,5 +1,5 @@
-#ifndef TIME_H_
-#define TIME_H_
+#ifndef TS_TIME_H_
+#define TS_TIME_H_
 
 #include "ts_stamp.h"
 #include <cassert>
@@ -25,4 +25,4 @@ private:
 } // namespace timestamp
 
 
-#endif /* TIME_H_ */
+#endif /* TS_TIME_H_ */

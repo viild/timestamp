@@ -1,5 +1,5 @@
-#ifndef TIMESTAMP_H_
-#define TIMESTAMP_H_
+#ifndef TS_TIMESTAMP_H_
+#define TS_TIMESTAMP_H_
 
 #include <memory>
 #include "ts_time.h"
@@ -40,4 +40,4 @@ private:
     const std::pair<int, std::string> BuildTimestamp(ObjectData_t data);
 };
 
-#endif /* TIMESTAMP_H_ */
+#endif /* TS_TIMESTAMP_H_ */

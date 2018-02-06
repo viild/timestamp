@@ -3,14 +3,16 @@ project (Timestamp)
 include(GNUInstallDirs)
 
 set (TS_PROJECT_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR})
-set (TS_PROJECT_INCLUDE_DIR ${PROJECT_ROOT_DIR}/inc)
+set (TS_PROJECT_INCLUDE_DIR ${TS_PROJECT_ROOT_DIR}/inc)
 set (TS_PROJECT_SOURCE_DIR ${TS_PROJECT_ROOT_DIR}/src)
+set (TS_PROJECT_OUTPUT_LIBRARY /usr/local/lib)
+set (TS_PROJECT_OUTPUT_PUBLIC_HEADER /usr/local/include/wlc)
 
 enable_testing()
 
 #Define default build type
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
+    set(CMAKE_BUILD_TYPE Release)
 endif(NOT CMAKE_BUILD_TYPE)
 
 #Define default library type
@@ -58,6 +60,15 @@ else()
 )
 endif()
 
+set(TS_HEADERS
+ ${TS_PROJECT_INCLUDE_DIR}/timestamp.h
+ ${TS_PROJECT_INCLUDE_DIR}/ts_timestamp.h
+ ${TS_PROJECT_INCLUDE_DIR}/ts_stamp.h
+ ${TS_PROJECT_INCLUDE_DIR}/ts_time.h
+ ${TS_PROJECT_INCLUDE_DIR}/ts_raw.h
+ ${TS_PROJECT_INCLUDE_DIR}/ts_date.h
+)
+
 #Test block added here as well in order to run the tests
 #correctly during the build
 add_custom_target(all_tests ALL
@@ -71,7 +82,7 @@ add_custom_command(TARGET all_tests
 
 #Define library's properties
 set_target_properties(timestamp PROPERTIES
-  PUBLIC_HEADER ${TS_PROJECT_INCLUDE_DIR}/ts_date.h ${TS_PROJECT_INCLUDE_DIR}/ts_stamp.h ${TS_PROJECT_INCLUDE_DIR}/ts_time.h ${TS_PROJECT_INCLUDE_DIR}/ts_raw.h ${TS_PROJECT_INCLUDE_DIR}/ts_timestamp.h
+  PUBLIC_HEADER "${TS_HEADERS}"
   ARCHIVE_OUTPUT_DIRECTORY "${TS_PROJECT_ROOT_DIR}/lib"
   LIBRARY_OUTPUT_DIRECTORY "${TS_PROJECT_ROOT_DIR}/lib"
 )
@@ -79,12 +90,12 @@ set_target_properties(timestamp PROPERTIES
 configure_file(${TS_PROJECT_ROOT_DIR}/timestamp.pc.in ${TS_PROJECT_ROOT_DIR}/timestamp.pc @ONLY)
 
 target_include_directories(timestamp PRIVATE ${TS_PROJECT_SOURCE_DIR})
-target_include_directories(timestamp PUBLIC ${TS_PROJECT_INCLUDE_DIR})
+target_include_directories(timestamp PRIVATE ${TS_PROJECT_INCLUDE_DIR})
 
 install(TARGETS timestamp
-  ARCHIVE DESTINATION "${TS_PROJECT_ROOT_DIR}/lib"
-  LIBRARY DESTINATION "${TS_PROJECT_ROOT_DIR}/lib"
-  PUBLIC_HEADER DESTINATION ${TS_PROJECT_INCLUDE_DIR}
+  ARCHIVE DESTINATION "${TS_PROJECT_OUTPUT_LIBRARY}"
+  LIBRARY DESTINATION "${TS_PROJECT_OUTPUT_LIBRARY}"
+  PUBLIC_HEADER DESTINATION ${TS_PROJECT_OUTPUT_PUBLIC_HEADER}
 )
 
 install(FILES ${TS_PROJECT_ROOT_DIR}/timestamp.pc

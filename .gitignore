@@ -13,3 +13,4 @@ tests/cmake_install.cmake
 tests/Makefile
 Testing
 CTestTestfile.cmake
+install_manifest.txt
