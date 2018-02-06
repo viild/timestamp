@@ -3,59 +3,45 @@
 namespace timestamp {
 
 /**
- *  Stamp - class constructor
+ *  PlaceTwoDigits - return string in specified format
+ *  @value: value to return in specified format
  *
- *  This constructor initializes empty pattern.
+ *  This method returns the string with decimal value in format
+ *  %02d or 00-99.
  */
-Stamp::Stamp() : pattern("") {};
-
-/**
- *  GetPattern - return current pattern
- *
- *  This method returns value of "pattern" variable defined in the class.
- */
-const std::string Stamp::GetPattern() const
+std::string Stamp::PlaceTwoDigits(const int value)
 {
-    return this->pattern;
+    std::stringstream string_stream;
+    string_stream << std::setw(2) << std::setfill('0') << value;
+    return string_stream.str();
 }
 
 /**
- *  SetPattern - save new pattern
- *  @pattern: pattern string to save
+ *  PlaceThreeDigits - return string in specified format
+ *  @value: value to return in specified format
  *
- *  This method saves new pattern in "pattern" variable defined in the class.
+ *  This method returns the string with decimal value in format
+ *  %03d or 000-999.
  */
-void Stamp::SetPattern(const std::string & pattern)
+std::string Stamp::PlaceThreeDigits(const int value)
 {
-    this->pattern = pattern;
+    std::stringstream string_stream;
+    string_stream << std::setw(3) << std::setfill('0') << value;
+    return string_stream.str();
 }
 
 /**
- *  GetValue - form string using different arguments
- *  @fmt: format used to form the string
+ *  PlaceFourDigits - return string in specified format
+ *  @value: value to return in specified format
  *
- *  This method forms the string using various arguments. It returns empty string if
- *  "fmt" is empty.
+ *  This method returns the string with decimal value in format
+ *  %04d or 0000-9999.
  */
-const std::string Stamp::GetValue(const char * fmt, ...) const
+std::string Stamp::PlaceFourDigits(const int value)
 {
-    char result[kMaxValueSize];
-    if (!strcmp(fmt, ""))
-        return "";
-
-    va_list args;
-    va_start(args, fmt);
-    vsprintf(result, fmt, args);
-    va_end(args);
-
-    return result;
+    std::stringstream string_stream;
+    string_stream << std::setw(4) << std::setfill('0') << value;
+    return string_stream.str();
 }
-
-/**
- *  Stamp - class destructor
- *
- *  This destructor does nothing but is necessary because there is virtual function.
- */
-Stamp::~Stamp() {}
 
 } // namespace timestamp

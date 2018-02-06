@@ -6,10 +6,7 @@
 namespace timestamp {
 
 class Raw : public Stamp {
-private:
-    const PairIntString BuildPattern() override;
 public:
-    Raw();
     const std::string Get() const;
 };
 

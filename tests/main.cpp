@@ -59,11 +59,11 @@ int main()
 
     printRunnig(time_test.returnFileName());
     passed = countSuccessfull(time_test.returnFileName(), time_test.run());
-    printRunnig(time_test.returnFileName());
+    printRunnig(date_test.returnFileName());
     passed = countSuccessfull(date_test.returnFileName(), date_test.run());
-    printRunnig(time_test.returnFileName());
+    printRunnig(raw_test.returnFileName());
     passed = countSuccessfull(raw_test.returnFileName(), raw_test.run());
-    printRunnig(time_test.returnFileName());
+    printRunnig(timestamp_test.returnFileName());
     passed = countSuccessfull(timestamp_test.returnFileName(), timestamp_test.run());
 
     std::cout << std::endl;

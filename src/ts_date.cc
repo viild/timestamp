@@ -8,25 +8,18 @@ namespace timestamp {
  *  @_date_separator: date separator specifier
  *  @_date_format: date format specifier
  *
- *  This constructor creates an object of the Date class. This also invokes constructor
- *  of the Stamp class and sets variables date_separator and date_format by values
- *  given by an user. In brackets, it prepares pattern and throws the exception if
- *  error occurred.
+ *  This constructor creates an object of the Date class. This also sets variables
+ *  date_separator and date_format by values given by an user.
  */
 Date::Date(const DateSeparator & _date_separator, const DateFormat & _date_format) :
-    Stamp(), date_separator(_date_separator), date_format(_date_format)
-{
-    PairIntString rv;
-    rv = BuildPattern();
-    if (rv.first)
-        throw rv.first;
-}
+    date_separator(_date_separator), date_format(_date_format)
+{}
 
 /**
  *  Get - return date in specific format
  *
  *  This method forms string with current date in format defined by "date_format"
- *  and returns it.
+ *  and "date_separator" and then returns it.
  */
 const std::string Date::Get() const
 {
@@ -38,67 +31,78 @@ const std::string Date::Get() const
     int month = local_tm.tm_mon + 1;
     int year = local_tm.tm_year + 1900;
 
+    std::stringstream string_stream;
+
     switch (this->date_format) {
         case timestamp::Date::DateFormat::DMY:
-            return GetValue(GetPattern().c_str(), day, month, year);
+            switch (this->date_separator) {
+                case timestamp::Date::DateSeparator::DASH:
+                    string_stream << timestamp::Stamp::PlaceTwoDigits(day) << "-"
+                                  << timestamp::Stamp::PlaceTwoDigits(month) << "-"
+                                  << timestamp::Stamp::PlaceFourDigits(year);
+                    return string_stream.str();
+                case timestamp::Date::DateSeparator::DOT:
+                    string_stream << timestamp::Stamp::PlaceTwoDigits(day) << "."
+                                  << timestamp::Stamp::PlaceTwoDigits(month) << "."
+                                  << timestamp::Stamp::PlaceFourDigits(year);
+                    return string_stream.str();
+                case timestamp::Date::DateSeparator::SLASH:
+                    string_stream << timestamp::Stamp::PlaceTwoDigits(day) << "/"
+                                  << timestamp::Stamp::PlaceTwoDigits(month) << "/"
+                                  << timestamp::Stamp::PlaceFourDigits(year);
+                    return string_stream.str();
+                default:
+                    return "";
+            }
+            ;
+            break;
         case timestamp::Date::DateFormat::MDY:
-            return GetValue(GetPattern().c_str(), month, day, year);
-        case timestamp::Date::DateFormat::YMD:
-            return GetValue(GetPattern().c_str(), year, month, day);
-        default : return "";
-    }
-}
-
-/**
- *  BuildPattern - form pattern of the class Date
- *
- *  This method forms the pattern string based on user-defined date separator
- *  and date format. Once the string is formed, it is saved in the Stamp class
- *  by using "SetPattern" method.
- */
-const PairIntString Date::BuildPattern()
-{
-    char separator;
-
-    /* Get separator */
-    switch (this->date_separator) {
-        case timestamp::Date::DateSeparator::DASH:
-            separator = '-';
-            break;
-        case timestamp::Date::DateSeparator::DOT:
-            separator = '.';
-            break;
-        case timestamp::Date::DateSeparator::SLASH:
-            separator = '/';
-            break;
-    }
-
-    std::string local_pattern;
-    /* Build pattern based on the format */
-    switch (this->date_format) {
-        case timestamp::Date::DateFormat::MDY:
-        case timestamp::Date::DateFormat::DMY:
-            local_pattern  = "%02d";
-            local_pattern += separator;
-            local_pattern += "%02d";
-            local_pattern += separator;
-            local_pattern += "%04d";
+            switch (this->date_separator) {
+                case timestamp::Date::DateSeparator::DASH:
+                    string_stream << timestamp::Stamp::PlaceTwoDigits(month) << "-"
+                                  << timestamp::Stamp::PlaceTwoDigits(day) << "-"
+                                  << timestamp::Stamp::PlaceFourDigits(year);
+                    return string_stream.str();
+                case timestamp::Date::DateSeparator::DOT:
+                    string_stream << timestamp::Stamp::PlaceTwoDigits(month) << "."
+                                  << timestamp::Stamp::PlaceTwoDigits(day) << "."
+                                  << timestamp::Stamp::PlaceFourDigits(year);
+                    return string_stream.str();
+                case timestamp::Date::DateSeparator::SLASH:
+                    string_stream << timestamp::Stamp::PlaceTwoDigits(month) << "/"
+                                  << timestamp::Stamp::PlaceTwoDigits(day) << "/"
+                                  << timestamp::Stamp::PlaceFourDigits(year);
+                    return string_stream.str();
+                default:
+                    return "";
+            }
+            ;
             break;
         case timestamp::Date::DateFormat::YMD:
-            local_pattern  = "%04d";
-            local_pattern += separator;
-            local_pattern += "%02d";
-            local_pattern += separator;
-            local_pattern += "%02d";
+            switch (this->date_separator) {
+                case timestamp::Date::DateSeparator::DASH:
+                    string_stream << timestamp::Stamp::PlaceFourDigits(year) << "-"
+                                  << timestamp::Stamp::PlaceTwoDigits(day) << "-"
+                                  << timestamp::Stamp::PlaceTwoDigits(month);
+                    return string_stream.str();
+                case timestamp::Date::DateSeparator::DOT:
+                    string_stream << timestamp::Stamp::PlaceFourDigits(year) << "."
+                                  << timestamp::Stamp::PlaceTwoDigits(day) << "."
+                                  << timestamp::Stamp::PlaceTwoDigits(month);
+                    return string_stream.str();
+                case timestamp::Date::DateSeparator::SLASH:
+                    string_stream << timestamp::Stamp::PlaceFourDigits(year) << "/"
+                                  << timestamp::Stamp::PlaceTwoDigits(day) << "/"
+                                  << timestamp::Stamp::PlaceTwoDigits(month);
+                    return string_stream.str();
+                default:
+                    return "";
+            }
+            ;
             break;
-    }
-
-    try {
-        SetPattern(local_pattern);
-    } catch (...) {
-        return std::make_pair(1, "Set pattern error");
-    }
-    return std::make_pair(0, "No error");
+        default:
+            return "";
+    };
 }
 
 } // namespace timestamp

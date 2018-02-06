@@ -6,7 +6,7 @@
 
 namespace timestamp {
 
-class Date : public Stamp {
+class Date {
 public:
     enum class DateSeparator {SLASH, DASH, DOT};
     enum class DateFormat {DMY, MDY, YMD};
@@ -14,7 +14,6 @@ public:
     Date(const DateSeparator & _date_separator, const DateFormat & _date_format);
     const std::string Get() const;
 private:
-    const PairIntString BuildPattern() override;
     DateSeparator date_separator;
     DateFormat date_format;
 };
