@@ -24,6 +24,8 @@ public:
     Timestamp(const TimestampFormat & _timestamp_format,
               const timestamp::Date::DateSeparator & _date_separator,
               const timestamp::Time::TimeFormat & _time_format, const bool & offset, const bool & msec);
+    Timestamp(const Timestamp & timestamp);
+    Timestamp & operator=(const Timestamp & timestamp);
     const std::string Get() const;
 private:
     typedef struct ObjectData {
@@ -33,7 +35,7 @@ private:
         bool offset;
         bool msec;
     } ObjectData_t;
-    const TimestampFormat timestamp_format;
+    TimestampFormat timestamp_format;
     std::unique_ptr<timestamp::Time> time_obj;
     std::unique_ptr<timestamp::Date> date_obj;
     std::unique_ptr<timestamp::Raw> raw_obj;

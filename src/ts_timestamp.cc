@@ -139,6 +139,35 @@ Timestamp::Timestamp(const TimestampFormat & _TimestampFormat,
 }
 
 /**
+ *  Timestamp - class constructor
+ *  @timestamp: timestamp to copy
+ *
+ *  This constructor copies values from another timestamp object.
+ */
+Timestamp::Timestamp(const Timestamp & timestamp) :
+    timestamp_format(timestamp.timestamp_format),
+    time_obj(new timestamp::Time(*timestamp.time_obj)),
+    date_obj(new timestamp::Date(*timestamp.date_obj)),
+    raw_obj(new timestamp::Raw(*timestamp.raw_obj))
+{}
+
+/**
+ *  operator= - assignment operator
+ *  @timestamp: timestamp to copy
+ *
+ *  This method copies values from the provided timestamp object
+ *  and returns new one.
+ */
+Timestamp & Timestamp::operator=(const Timestamp & timestamp)
+{
+  timestamp_format = timestamp.timestamp_format;
+  time_obj = std::unique_ptr <timestamp::Time>(new timestamp::Time(*timestamp.time_obj));
+  date_obj = std::unique_ptr <timestamp::Date>(new timestamp::Date(*timestamp.date_obj));
+  raw_obj = std::unique_ptr <timestamp::Raw>(new timestamp::Raw(*timestamp.raw_obj));
+  return *this;
+}
+
+/**
  *  BuildTimestamp - form pattern of the class Timestamp
  *  @data: data to use
  *
