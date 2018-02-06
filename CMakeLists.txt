@@ -22,7 +22,7 @@ endif(NOT PROJECT_LIBRARY_TYPE)
 include_directories(${TS_PROJECT_INCLUDE_DIR})
 
 #Compilator's flags
-SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++14 -Wall -Werror")
+SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++11 -Wall -Werror")
 add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 
 #Test block
