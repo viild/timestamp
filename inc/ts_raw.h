@@ -5,7 +5,7 @@
 
 namespace timestamp {
 
-class Raw : public Stamp {
+class Raw {
 public:
     const std::string Get() const;
 };

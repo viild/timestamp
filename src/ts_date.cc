@@ -37,19 +37,19 @@ const std::string Date::Get() const
         case timestamp::Date::DateFormat::DMY:
             switch (this->date_separator) {
                 case timestamp::Date::DateSeparator::DASH:
-                    string_stream << timestamp::Stamp::PlaceTwoDigits(day) << "-"
-                                  << timestamp::Stamp::PlaceTwoDigits(month) << "-"
-                                  << timestamp::Stamp::PlaceFourDigits(year);
+                    string_stream << AuxStamp::PlaceTwoDigits(day) << "-"
+                                  << AuxStamp::PlaceTwoDigits(month) << "-"
+                                  << AuxStamp::PlaceFourDigits(year);
                     return string_stream.str();
                 case timestamp::Date::DateSeparator::DOT:
-                    string_stream << timestamp::Stamp::PlaceTwoDigits(day) << "."
-                                  << timestamp::Stamp::PlaceTwoDigits(month) << "."
-                                  << timestamp::Stamp::PlaceFourDigits(year);
+                    string_stream << AuxStamp::PlaceTwoDigits(day) << "."
+                                  << AuxStamp::PlaceTwoDigits(month) << "."
+                                  << AuxStamp::PlaceFourDigits(year);
                     return string_stream.str();
                 case timestamp::Date::DateSeparator::SLASH:
-                    string_stream << timestamp::Stamp::PlaceTwoDigits(day) << "/"
-                                  << timestamp::Stamp::PlaceTwoDigits(month) << "/"
-                                  << timestamp::Stamp::PlaceFourDigits(year);
+                    string_stream << AuxStamp::PlaceTwoDigits(day) << "/"
+                                  << AuxStamp::PlaceTwoDigits(month) << "/"
+                                  << AuxStamp::PlaceFourDigits(year);
                     return string_stream.str();
                 default:
                     return "";
@@ -59,19 +59,19 @@ const std::string Date::Get() const
         case timestamp::Date::DateFormat::MDY:
             switch (this->date_separator) {
                 case timestamp::Date::DateSeparator::DASH:
-                    string_stream << timestamp::Stamp::PlaceTwoDigits(month) << "-"
-                                  << timestamp::Stamp::PlaceTwoDigits(day) << "-"
-                                  << timestamp::Stamp::PlaceFourDigits(year);
+                    string_stream << AuxStamp::PlaceTwoDigits(month) << "-"
+                                  << AuxStamp::PlaceTwoDigits(day) << "-"
+                                  << AuxStamp::PlaceFourDigits(year);
                     return string_stream.str();
                 case timestamp::Date::DateSeparator::DOT:
-                    string_stream << timestamp::Stamp::PlaceTwoDigits(month) << "."
-                                  << timestamp::Stamp::PlaceTwoDigits(day) << "."
-                                  << timestamp::Stamp::PlaceFourDigits(year);
+                    string_stream << AuxStamp::PlaceTwoDigits(month) << "."
+                                  << AuxStamp::PlaceTwoDigits(day) << "."
+                                  << AuxStamp::PlaceFourDigits(year);
                     return string_stream.str();
                 case timestamp::Date::DateSeparator::SLASH:
-                    string_stream << timestamp::Stamp::PlaceTwoDigits(month) << "/"
-                                  << timestamp::Stamp::PlaceTwoDigits(day) << "/"
-                                  << timestamp::Stamp::PlaceFourDigits(year);
+                    string_stream << AuxStamp::PlaceTwoDigits(month) << "/"
+                                  << AuxStamp::PlaceTwoDigits(day) << "/"
+                                  << AuxStamp::PlaceFourDigits(year);
                     return string_stream.str();
                 default:
                     return "";
@@ -81,19 +81,19 @@ const std::string Date::Get() const
         case timestamp::Date::DateFormat::YMD:
             switch (this->date_separator) {
                 case timestamp::Date::DateSeparator::DASH:
-                    string_stream << timestamp::Stamp::PlaceFourDigits(year) << "-"
-                                  << timestamp::Stamp::PlaceTwoDigits(day) << "-"
-                                  << timestamp::Stamp::PlaceTwoDigits(month);
+                    string_stream << AuxStamp::PlaceFourDigits(year) << "-"
+                                  << AuxStamp::PlaceTwoDigits(day) << "-"
+                                  << AuxStamp::PlaceTwoDigits(month);
                     return string_stream.str();
                 case timestamp::Date::DateSeparator::DOT:
-                    string_stream << timestamp::Stamp::PlaceFourDigits(year) << "."
-                                  << timestamp::Stamp::PlaceTwoDigits(day) << "."
-                                  << timestamp::Stamp::PlaceTwoDigits(month);
+                    string_stream << AuxStamp::PlaceFourDigits(year) << "."
+                                  << AuxStamp::PlaceTwoDigits(day) << "."
+                                  << AuxStamp::PlaceTwoDigits(month);
                     return string_stream.str();
                 case timestamp::Date::DateSeparator::SLASH:
-                    string_stream << timestamp::Stamp::PlaceFourDigits(year) << "/"
-                                  << timestamp::Stamp::PlaceTwoDigits(day) << "/"
-                                  << timestamp::Stamp::PlaceTwoDigits(month);
+                    string_stream << AuxStamp::PlaceFourDigits(year) << "/"
+                                  << AuxStamp::PlaceTwoDigits(day) << "/"
+                                  << AuxStamp::PlaceTwoDigits(month);
                     return string_stream.str();
                 default:
                     return "";
