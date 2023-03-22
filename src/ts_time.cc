@@ -76,60 +76,60 @@ const std::string Time::Get() const
     switch (this->time_format) {
         case timestamp::Time::TimeFormat::TIME_24_H:
             if (show_offset && show_msec) {
-                string_stream << AuxStamp::PlaceTwoDigits(hours) << ":"
-                    << AuxStamp::PlaceTwoDigits(mins) << ":"
-                    << AuxStamp::PlaceTwoDigits(secs) << "."
-                    << AuxStamp::PlaceThreeDigits(msec) << " UTC " << offset_char
-                    << AuxStamp::PlaceTwoDigits(offset_hours)
-                    << AuxStamp::PlaceTwoDigits(offset_mins);
+                string_stream << AuxStamp::Format(2, hours) << ":"
+                    << AuxStamp::Format(2, mins) << ":"
+                    << AuxStamp::Format(2, secs) << "."
+                    << AuxStamp::Format(3, msec) << " UTC " << offset_char
+                    << AuxStamp::Format(2, offset_hours)
+                    << AuxStamp::Format(2, offset_mins);
                 return string_stream.str();
             } else if (show_offset && !show_msec) {
-                string_stream << AuxStamp::PlaceTwoDigits(hours) << ":"
-                              << AuxStamp::PlaceTwoDigits(mins) << ":"
-                              << AuxStamp::PlaceTwoDigits(secs) << " UTC " << offset_char
-                              << AuxStamp::PlaceTwoDigits(offset_hours)
-                              << AuxStamp::PlaceTwoDigits(offset_mins);
+                string_stream << AuxStamp::Format(2, hours) << ":"
+                              << AuxStamp::Format(2, mins) << ":"
+                              << AuxStamp::Format(2, secs) << " UTC " << offset_char
+                              << AuxStamp::Format(2, offset_hours)
+                              << AuxStamp::Format(2, offset_mins);
                 return string_stream.str();
             } else if (!show_offset && show_msec) {
-                string_stream << AuxStamp::PlaceTwoDigits(hours) << ":"
-                    << AuxStamp::PlaceTwoDigits(mins) << ":"
-                    << AuxStamp::PlaceTwoDigits(secs) << "."
-                    << AuxStamp::PlaceThreeDigits(msec);
+                string_stream << AuxStamp::Format(2, hours) << ":"
+                    << AuxStamp::Format(2, mins) << ":"
+                    << AuxStamp::Format(2, secs) << "."
+                    << AuxStamp::Format(3, msec);
                 return string_stream.str();
             } else {
-                string_stream << AuxStamp::PlaceTwoDigits(hours) << ":"
-                              << AuxStamp::PlaceTwoDigits(mins) << ":"
-                              << AuxStamp::PlaceTwoDigits(secs);
+                string_stream << AuxStamp::Format(2, hours) << ":"
+                              << AuxStamp::Format(2, mins) << ":"
+                              << AuxStamp::Format(2, secs);
                 return string_stream.str();
             }
             break;
         case timestamp::Time::TimeFormat::TIME_12_H:
             if (show_offset && show_msec) {
-                string_stream << AuxStamp::PlaceTwoDigits(time_period.first) << ":"
-                    << AuxStamp::PlaceTwoDigits(mins) << ":"
-                    << AuxStamp::PlaceTwoDigits(secs) << "."
-                    << AuxStamp::PlaceThreeDigits(msec) << " " << time_period.second
-                    << " UTC " << offset_char << AuxStamp::PlaceTwoDigits(offset_hours)
-                    << AuxStamp::PlaceTwoDigits(offset_mins);
+                string_stream << AuxStamp::Format(2, time_period.first) << ":"
+                    << AuxStamp::Format(2, mins) << ":"
+                    << AuxStamp::Format(2, secs) << "."
+                    << AuxStamp::Format(3, msec) << " " << time_period.second
+                    << " UTC " << offset_char << AuxStamp::Format(2, offset_hours)
+                    << AuxStamp::Format(2, offset_mins);
                 return string_stream.str();
             } else if (show_offset && !show_msec) {
-                string_stream << AuxStamp::PlaceTwoDigits(time_period.first) << ":"
-                              << AuxStamp::PlaceTwoDigits(mins) << ":"
-                              << AuxStamp::PlaceTwoDigits(secs) << " " << time_period.second
+                string_stream << AuxStamp::Format(2, time_period.first) << ":"
+                              << AuxStamp::Format(2, mins) << ":"
+                              << AuxStamp::Format(2, secs) << " " << time_period.second
                               << " UTC " << offset_char
-                              << AuxStamp::PlaceTwoDigits(offset_hours)
-                              << AuxStamp::PlaceTwoDigits(offset_mins);
+                              << AuxStamp::Format(2, offset_hours)
+                              << AuxStamp::Format(2, offset_mins);
                 return string_stream.str();
             } else if (!show_offset && show_msec) {
-                string_stream << AuxStamp::PlaceTwoDigits(time_period.first) << ":"
-                    << AuxStamp::PlaceTwoDigits(mins) << ":"
-                    << AuxStamp::PlaceTwoDigits(secs) << "."
-                    << AuxStamp::PlaceThreeDigits(msec) << " " << time_period.second;
+                string_stream << AuxStamp::Format(2, time_period.first) << ":"
+                    << AuxStamp::Format(2, mins) << ":"
+                    << AuxStamp::Format(2, secs) << "."
+                    << AuxStamp::Format(3, msec) << " " << time_period.second;
                 return string_stream.str();
             } else {
-                string_stream << AuxStamp::PlaceTwoDigits(time_period.first) << ":"
-                              << AuxStamp::PlaceTwoDigits(mins) << ":"
-                              << AuxStamp::PlaceTwoDigits(secs) << " "
+                string_stream << AuxStamp::Format(2, time_period.first) << ":"
+                              << AuxStamp::Format(2, mins) << ":"
+                              << AuxStamp::Format(2, secs) << " "
                               << time_period.second;
                 return string_stream.str();
             }
