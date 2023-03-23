@@ -96,9 +96,9 @@ const std::string TimeUt::enumToString(const timestamp::Time::TimeFormat value) 
 {
     switch (value) {
         case timestamp::Time::TimeFormat::TIME_12_H:
-            return "TIME_12_H";
+            return "Time in 12H format";
         case timestamp::Time::TimeFormat::TIME_24_H:
-            return "TIME_24_H";
+            return "Time in 24H format";
         default:
             return "";
     }
@@ -176,9 +176,9 @@ const int TimeUt::run()
         result = result && local_result;
         std::string set_string = enumToString(time_set[0].time_format);
         set_string.append(", ");
-        set_string.append(time_set[0].offset ? "true" : "false");
+        set_string.append(time_set[0].offset ? "Offset enabled" : "Offset disabled");
         set_string.append(", ");
-        set_string.append(time_set[0].msec ? "true" : "false");
+        set_string.append(time_set[0].msec ? "Milliseconds enabled" : "Milliseconds disabled");
         if (!local_result) {
             unexpectedResult(1, TYPE, set_string, get_result);
         } else {
@@ -195,9 +195,9 @@ const int TimeUt::run()
         result = result && local_result;
         std::string set_string = enumToString(time_set[4].time_format);
         set_string.append(", ");
-        set_string.append(time_set[4].offset ? "true" : "false");
+        set_string.append(time_set[4].offset ? "Offset enabled" : "Offset disabled");
         set_string.append(", ");
-        set_string.append(time_set[4].msec ? "true" : "false");
+        set_string.append(time_set[4].msec ? "Milliseconds enabled" : "Milliseconds disabled");
         if (!local_result) {
             unexpectedResult(1, TYPE, set_string, get_result);
         } else {
@@ -218,9 +218,9 @@ const int TimeUt::run()
             result = result && local_result;
             std::string set_string = enumToString(time_set[i].time_format);
             set_string.append(", ");
-            set_string.append(time_set[i].offset ? "true" : "false");
+            set_string.append(time_set[i].offset ? "Offset enabled" : "Offset disabled");
             set_string.append(", ");
-            set_string.append(time_set[i].msec ? "true" : "false");
+            set_string.append(time_set[i].msec ? "Milliseconds enabled" : "Milliseconds disabled");
             if (!local_result) {
                 unexpectedResult(2, TYPE, set_string, get_result);
             } else {

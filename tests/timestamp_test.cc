@@ -42,9 +42,9 @@ const std::string TimestampUt::enumToString(const timestamp::Time::TimeFormat va
 {
     switch (value) {
         case timestamp::Time::TimeFormat::TIME_12_H:
-            return "TIME_12_H";
+            return "Time in 12H format";
         case timestamp::Time::TimeFormat::TIME_24_H:
-            return "TIME_24_H";
+            return "Time in 24H format";
         default:
             return "";
     }
@@ -61,21 +61,21 @@ const std::string TimestampUt::enumToString(const Timestamp::TimestampFormat val
 {
     switch (value) {
         case Timestamp::TimestampFormat::DMY:
-            return "DMY";
+            return "Format is Day Month Year";
         case Timestamp::TimestampFormat::MDY:
-            return "MDY";
+            return "Format is Month Day Year";
         case Timestamp::TimestampFormat::YMD:
-            return "YMD";
+            return "Format is Year Month Day";
         case Timestamp::TimestampFormat::DMY_DATE_ONLY:
-            return "DMY_DATE_ONLY";
+            return "Day Month Year date only";
         case Timestamp::TimestampFormat::MDY_DATE_ONLY:
-            return "MDY_DATE_ONLY";
+            return "Month Day Year date only";
         case Timestamp::TimestampFormat::YMD_DATE_ONLY:
-            return "YMD_DATE_ONLY";
+            return "Year Month Day date only";
         case Timestamp::TimestampFormat::RAW:
             return "RAW";
         case Timestamp::TimestampFormat::TIME_ONLY:
-            return "TIME_ONLY";
+            return "Time only";
         default:
             return "";
     }
@@ -97,6 +97,8 @@ const std::string TimestampUt::enumToString(const timestamp::Date::DateSeparator
             return "DASH";
         case timestamp::Date::DateSeparator::DOT:
             return "DOT";
+        case timestamp::Date::DateSeparator::BACKSLASH:
+            return "BACKSLASH";
         default:
             return "";
     }
@@ -159,12 +161,15 @@ const int TimestampUt::generateKey(property_set_t set) const
         case timestamp::Date::DateSeparator::DOT:
             key |= (1 << 12);
             break;
+        case timestamp::Date::DateSeparator::BACKSLASH:
+            key |= (1 << 13);
+            break;
     }
 
     if(set.show_msec)
-        key |= (1 << 13);
+        key |= (1 << 14);
     if(set.show_offset)
-            key |= (1 << 14);
+            key |= (1 << 15);
 
     return key;
 }
@@ -195,6 +200,7 @@ const int TimestampUt::run()
     timestamp::Date::DateSeparator d_separator_dash = timestamp::Date::DateSeparator::DASH;
     timestamp::Date::DateSeparator d_separator_slash = timestamp::Date::DateSeparator::SLASH;
     timestamp::Date::DateSeparator d_separator_dot = timestamp::Date::DateSeparator::DOT;
+    timestamp::Date::DateSeparator d_separator_backslash = timestamp::Date::DateSeparator::BACKSLASH;
 
     property_set_t timestamp_set[kMaxDateSets] =
 
@@ -401,7 +407,76 @@ const int TimestampUt::run()
          {timestamp_mdy_date_only,  d_separator_dot, t_format_24_h, true, true},
          {timestamp_ymd_date_only,  d_separator_dot, t_format_24_h, true, true},
          {timestamp_raw,            d_separator_dot, t_format_24_h, true, true},
-         {timestamp_time_only,      d_separator_dot, t_format_24_h, true, true}};
+         {timestamp_time_only,      d_separator_dot, t_format_24_h, true, true},
+         
+           
+         /* d_separator_backslash */
+
+         {timestamp_dmy,            d_separator_backslash, t_format_12_h, false, false},
+         {timestamp_mdy,            d_separator_backslash, t_format_12_h, false, false},
+         {timestamp_ymd,            d_separator_backslash, t_format_12_h, false, false},
+         {timestamp_dmy_date_only,  d_separator_backslash, t_format_12_h, false, false},
+         {timestamp_mdy_date_only,  d_separator_backslash, t_format_12_h, false, false},
+         {timestamp_ymd_date_only,  d_separator_backslash, t_format_12_h, false, false},
+         {timestamp_raw,            d_separator_backslash, t_format_12_h, false, false},
+         {timestamp_time_only,      d_separator_backslash, t_format_12_h, false, false},
+         {timestamp_dmy,            d_separator_backslash, t_format_12_h, false, true},
+         {timestamp_mdy,            d_separator_backslash, t_format_12_h, false, true},
+         {timestamp_ymd,            d_separator_backslash, t_format_12_h, false, true},
+         {timestamp_dmy_date_only,  d_separator_backslash, t_format_12_h, false, true},
+         {timestamp_mdy_date_only,  d_separator_backslash, t_format_12_h, false, true},
+         {timestamp_ymd_date_only,  d_separator_backslash, t_format_12_h, false, true},
+         {timestamp_raw,            d_separator_backslash, t_format_12_h, false, true},
+         {timestamp_time_only,      d_separator_backslash, t_format_12_h, false, true},
+         {timestamp_dmy,            d_separator_backslash, t_format_12_h, true, false},
+         {timestamp_mdy,            d_separator_backslash, t_format_12_h, true, false},
+         {timestamp_ymd,            d_separator_backslash, t_format_12_h, true, false},
+         {timestamp_dmy_date_only,  d_separator_backslash, t_format_12_h, true, false},
+         {timestamp_mdy_date_only,  d_separator_backslash, t_format_12_h, true, false},
+         {timestamp_ymd_date_only,  d_separator_backslash, t_format_12_h, true, false},
+         {timestamp_raw,            d_separator_backslash, t_format_12_h, true, false},
+         {timestamp_time_only,      d_separator_backslash, t_format_12_h, true, false},
+         {timestamp_dmy,            d_separator_backslash, t_format_12_h, true, true},
+         {timestamp_mdy,            d_separator_backslash, t_format_12_h, true, true},
+         {timestamp_ymd,            d_separator_backslash, t_format_12_h, true, true},
+         {timestamp_dmy_date_only,  d_separator_backslash, t_format_12_h, true, true},
+         {timestamp_mdy_date_only,  d_separator_backslash, t_format_12_h, true, true},
+         {timestamp_ymd_date_only,  d_separator_backslash, t_format_12_h, true, true},
+         {timestamp_raw,            d_separator_backslash, t_format_12_h, true, true},
+         {timestamp_time_only,      d_separator_backslash, t_format_12_h, true, true},
+
+         {timestamp_dmy,            d_separator_backslash, t_format_24_h, false, false},
+         {timestamp_mdy,            d_separator_backslash, t_format_24_h, false, false},
+         {timestamp_ymd,            d_separator_backslash, t_format_24_h, false, false},
+         {timestamp_dmy_date_only,  d_separator_backslash, t_format_24_h, false, false},
+         {timestamp_mdy_date_only,  d_separator_backslash, t_format_24_h, false, false},
+         {timestamp_ymd_date_only,  d_separator_backslash, t_format_24_h, false, false},
+         {timestamp_raw,            d_separator_backslash, t_format_24_h, false, false},
+         {timestamp_time_only,      d_separator_backslash, t_format_24_h, false, false},
+         {timestamp_dmy,            d_separator_backslash, t_format_24_h, false, true},
+         {timestamp_mdy,            d_separator_backslash, t_format_24_h, false, true},
+         {timestamp_ymd,            d_separator_backslash, t_format_24_h, false, true},
+         {timestamp_dmy_date_only,  d_separator_backslash, t_format_24_h, false, true},
+         {timestamp_mdy_date_only,  d_separator_backslash, t_format_24_h, false, true},
+         {timestamp_ymd_date_only,  d_separator_backslash, t_format_24_h, false, true},
+         {timestamp_raw,            d_separator_backslash, t_format_24_h, false, true},
+         {timestamp_time_only,      d_separator_backslash, t_format_24_h, false, true},
+         {timestamp_dmy,            d_separator_backslash, t_format_24_h, true, false},
+         {timestamp_mdy,            d_separator_backslash, t_format_24_h, true, false},
+         {timestamp_ymd,            d_separator_backslash, t_format_24_h, true, false},
+         {timestamp_dmy_date_only,  d_separator_backslash, t_format_24_h, true, false},
+         {timestamp_mdy_date_only,  d_separator_backslash, t_format_24_h, true, false},
+         {timestamp_ymd_date_only,  d_separator_backslash, t_format_24_h, true, false},
+         {timestamp_raw,            d_separator_backslash, t_format_24_h, true, false},
+         {timestamp_time_only,      d_separator_backslash, t_format_24_h, true, false},
+         {timestamp_dmy,            d_separator_backslash, t_format_24_h, true, true},
+         {timestamp_mdy,            d_separator_backslash, t_format_24_h, true, true},
+         {timestamp_ymd,            d_separator_backslash, t_format_24_h, true, true},
+         {timestamp_dmy_date_only,  d_separator_backslash, t_format_24_h, true, true},
+         {timestamp_mdy_date_only,  d_separator_backslash, t_format_24_h, true, true},
+         {timestamp_ymd_date_only,  d_separator_backslash, t_format_24_h, true, true},
+         {timestamp_raw,            d_separator_backslash, t_format_24_h, true, true},
+         {timestamp_time_only,      d_separator_backslash, t_format_24_h, true, true}};
 
 
     /* Fill the map in with patterns */
@@ -621,6 +696,78 @@ const int TimestampUt::run()
     match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[190]), "(\\d+)"));
     match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[191]), "(\\d{2}):(\\d{2}):(\\d{2}).(\\d{3}) UTC [+|-](\\d{2})(\\d{2})"));
 
+//------------------------------------------------------------------------------------------------------------------------------
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[192]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}) (AM|PM)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[193]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}) (AM|PM)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[194]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}) (AM|PM)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[195]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[196]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[197]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[198]), "(\\d+)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[199]), "(\\d{2}):(\\d{2}):(\\d{2}) (AM|PM)"));
+
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[200]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}).(\\d{3}) (AM|PM)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[201]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}).(\\d{3}) (AM|PM)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[202]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}).(\\d{3}) (AM|PM)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[203]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[204]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[205]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[206]), "(\\d+)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[207]), "(\\d{2}):(\\d{2}):(\\d{2}).(\\d{3}) (AM|PM)"));
+
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[208]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}) (AM|PM) UTC [+|-](\\d{2})(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[209]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}) (AM|PM) UTC [+|-](\\d{2})(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[210]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}) (AM|PM) UTC [+|-](\\d{2})(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[211]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[212]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[213]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[214]), "(\\d+)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[215]), "(\\d{2}):(\\d{2}):(\\d{2}) (AM|PM) UTC [+|-](\\d{2})(\\d{2})"));
+
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[216]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}).(\\d{3}) (AM|PM) UTC [+|-](\\d{2})(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[217]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}).(\\d{3}) (AM|PM) UTC [+|-](\\d{2})(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[218]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}).(\\d{3}) (AM|PM) UTC [+|-](\\d{2})(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[219]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[220]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[221]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[222]), "(\\d+)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[223]), "(\\d{2}):(\\d{2}):(\\d{2}).(\\d{3}) (AM|PM) UTC [+|-](\\d{2})(\\d{2})"));
+//
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[224]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[225]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[226]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[227]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[228]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[229]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[230]), "(\\d+)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[231]), "(\\d{2}):(\\d{2}):(\\d{2})"));
+
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[232]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}).(\\d{3})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[233]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}).(\\d{3})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[234]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}).(\\d{3})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[235]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[236]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[237]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[238]), "(\\d+)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[239]), "(\\d{2}):(\\d{2}):(\\d{2}).(\\d{3})"));
+
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[240]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}) UTC [+|-](\\d{2})(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[241]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}) UTC [+|-](\\d{2})(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[242]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}) UTC [+|-](\\d{2})(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[243]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[244]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[245]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[246]), "(\\d+)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[247]), "(\\d{2}):(\\d{2}):(\\d{2}) UTC [+|-](\\d{2})(\\d{2})"));
+
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[248]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}).(\\d{3}) UTC [+|-](\\d{2})(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[249]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}).(\\d{3}) UTC [+|-](\\d{2})(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[250]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}).(\\d{3}) UTC [+|-](\\d{2})(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[251]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[252]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[253]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[254]), "(\\d+)"));
+    match_map.insert(std::pair<int, std::string>(generateKey(timestamp_set[255]), "(\\d{2}):(\\d{2}):(\\d{2}).(\\d{3}) UTC [+|-](\\d{2})(\\d{2})"));
 
 
     /* Create the class object, get result and compare with pattern */
@@ -644,9 +791,9 @@ const int TimestampUt::run()
                 set_string.append(", ");
                 set_string.append(enumToString(timestamp_set[i].time_format));
                 set_string.append(", ");
-                set_string.append((timestamp_set[i].show_offset ? "true" : "false"));
+                set_string.append((timestamp_set[i].show_offset ? "Offset enabled" : "Offset disabled"));
                 set_string.append(", ");
-                set_string.append((timestamp_set[i].show_msec ? "true" : "false"));
+                set_string.append((timestamp_set[i].show_msec ? "Milliseconds enabled" : "Milliseconds disabled"));
 
                 if (!local_result) {
                     unexpectedResult(1, TYPE, set_string, get_result);
@@ -680,9 +827,9 @@ const int TimestampUt::run()
                 set_string.append(", ");
                 set_string.append(enumToString(timestamp_set[i].time_format));
                 set_string.append(", ");
-                set_string.append((timestamp_set[i].show_offset ? "true" : "false"));
+                set_string.append((timestamp_set[i].show_offset ? "Offset enabled" : "Offset disabled"));
                 set_string.append(", ");
-                set_string.append((timestamp_set[i].show_msec ? "true" : "false"));
+                set_string.append((timestamp_set[i].show_msec ? "Milliseconds enabled" : "Milliseconds disabled"));
 
                 if (!local_result) {
                     unexpectedResult(2, TYPE, set_string, get_result);
@@ -716,9 +863,9 @@ const int TimestampUt::run()
                 set_string.append(", ");
                 set_string.append(enumToString(timestamp_set[i].time_format));
                 set_string.append(", ");
-                set_string.append((timestamp_set[i].show_offset ? "true" : "false"));
+                set_string.append((timestamp_set[i].show_offset ? "Offset enabled" : "Offset disabled"));
                 set_string.append(", ");
-                set_string.append((timestamp_set[i].show_msec ? "true" : "false"));
+                set_string.append((timestamp_set[i].show_msec ? "Milliseconds enabled" : "Milliseconds disabled"));
 
                 if (!local_result) {
                     unexpectedResult(3, TYPE, set_string, get_result);
@@ -750,9 +897,9 @@ const int TimestampUt::run()
                 set_string.append(", ");
                 set_string.append(enumToString(timestamp_set[i].time_format));
                 set_string.append(", ");
-                set_string.append((timestamp_set[i].show_offset ? "true" : "false"));
+                set_string.append((timestamp_set[i].show_offset ? "Offset enabled" : "Offset disabled"));
                 set_string.append(", ");
-                set_string.append((timestamp_set[i].show_msec ? "true" : "false"));
+                set_string.append((timestamp_set[i].show_msec ? "Milliseconds enabled" : "Milliseconds disabled"));
 
                 if (!local_result) {
                     unexpectedResult(4, TYPE, set_string, get_result);
@@ -785,9 +932,9 @@ const int TimestampUt::run()
                 set_string.append(", ");
                 set_string.append(enumToString(timestamp_set[i].time_format));
                 set_string.append(", ");
-                set_string.append((timestamp_set[i].show_offset ? "true" : "false"));
+                set_string.append((timestamp_set[i].show_offset ? "Offset enabled" : "Offset disabled"));
                 set_string.append(", ");
-                set_string.append((timestamp_set[i].show_msec ? "true" : "false"));
+                set_string.append((timestamp_set[i].show_msec ? "Milliseconds enabled" : "Milliseconds enabled"));
 
                 if (!local_result) {
                     unexpectedResult(5, TYPE, set_string, get_result);
@@ -819,9 +966,9 @@ const int TimestampUt::run()
             set_string.append(", ");
             set_string.append(enumToString(timestamp_set[i].time_format));
             set_string.append(", ");
-            set_string.append((timestamp_set[i].show_offset ? "true" : "false"));
+            set_string.append((timestamp_set[i].show_offset ? "Offset enabled" : "Offset disabled"));
             set_string.append(", ");
-            set_string.append((timestamp_set[i].show_msec ? "true" : "false"));
+            set_string.append((timestamp_set[i].show_msec ? "Milliseconds enabled" : "Milliseconds disabled"));
 
             if (!local_result) {
                 unexpectedResult(6, TYPE, set_string, get_result);

@@ -8,7 +8,7 @@
 
 class TimestampUt : public UnitTest {
 private:
-    const int kMaxDateSets = 192;
+    const int kMaxDateSets = 256;
     const std::string TYPE = "Timestamp";
     typedef struct property_set {
         Timestamp::TimestampFormat timestamp_format;

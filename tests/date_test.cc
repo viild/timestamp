@@ -73,11 +73,11 @@ const std::string DateUt::enumToString(const timestamp::Date::DateFormat value) 
 {
     switch (value) {
         case timestamp::Date::DateFormat::DMY:
-            return "DMY";
+            return "Format is Day Month Year";
         case timestamp::Date::DateFormat::MDY:
-            return "MDY";
+            return "Format is Month Day Year";
         case timestamp::Date::DateFormat::YMD:
-            return "YMD";
+            return "Format is Year Month Day";
         default:
             return "";
     }
@@ -93,6 +93,8 @@ const std::string DateUt::enumToString(const timestamp::Date::DateFormat value) 
 const std::string DateUt::enumToString(const timestamp::Date::DateSeparator value) const
 {
     switch (value) {
+        case timestamp::Date::DateSeparator::BACKSLASH:
+            return "BACKSLASH";
         case timestamp::Date::DateSeparator::SLASH:
             return "SLASH";
         case timestamp::Date::DateSeparator::DASH:
@@ -136,6 +138,9 @@ const int DateUt::generateKey(property_set_t set) const
         case timestamp::Date::DateSeparator::DOT:
             key |= (1 << 5);
             break;
+        case timestamp::Date::DateSeparator::BACKSLASH:
+            key |= (1 << 6);
+            break;
     }
 
     return key;
@@ -159,30 +164,37 @@ const int DateUt::run()
     timestamp::Date::DateSeparator d_separator_dash = timestamp::Date::DateSeparator::DASH;
     timestamp::Date::DateSeparator d_separator_slash = timestamp::Date::DateSeparator::SLASH;
     timestamp::Date::DateSeparator d_separator_dot = timestamp::Date::DateSeparator::DOT;
+    timestamp::Date::DateSeparator d_separator_backslash = timestamp::Date::DateSeparator::BACKSLASH;
 
     property_set_t date_set[kMaxDateSets] = {{d_format_dmy, d_separator_dash},
                                              {d_format_dmy, d_separator_slash},
                                              {d_format_dmy, d_separator_dot},
+                                             {d_format_dmy, d_separator_backslash},
                                              {d_format_mdy, d_separator_dash},
                                              {d_format_mdy, d_separator_slash},
                                              {d_format_mdy, d_separator_dot},
+                                             {d_format_mdy, d_separator_backslash},
                                              {d_format_ymd, d_separator_dash},
                                              {d_format_ymd, d_separator_slash},
-                                             {d_format_ymd, d_separator_dot}};
+                                             {d_format_ymd, d_separator_dot},
+                                             {d_format_ymd, d_separator_backslash}};
 
 
     /* Fill the map in with patterns */
     match_map.insert(std::pair<int, std::string>(generateKey(date_set[0]), "(\\d{2})-(\\d{2})-(\\d{4})"));
     match_map.insert(std::pair<int, std::string>(generateKey(date_set[1]), "(\\d{2})/(\\d{2})/(\\d{4})"));
     match_map.insert(std::pair<int, std::string>(generateKey(date_set[2]), "(\\d{2}).(\\d{2}).(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(date_set[3]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
 
-    match_map.insert(std::pair<int, std::string>(generateKey(date_set[3]), "(\\d{2})-(\\d{2})-(\\d{4})"));
-    match_map.insert(std::pair<int, std::string>(generateKey(date_set[4]), "(\\d{2})/(\\d{2})/(\\d{4})"));
-    match_map.insert(std::pair<int, std::string>(generateKey(date_set[5]), "(\\d{2}).(\\d{2}).(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(date_set[4]), "(\\d{2})-(\\d{2})-(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(date_set[5]), "(\\d{2})/(\\d{2})/(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(date_set[6]), "(\\d{2}).(\\d{2}).(\\d{4})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(date_set[7]), "(\\d{2})\\\\(\\d{2})\\\\(\\d{4})"));
 
-    match_map.insert(std::pair<int, std::string>(generateKey(date_set[6]), "(\\d{4})-(\\d{2})-(\\d{2})"));
-    match_map.insert(std::pair<int, std::string>(generateKey(date_set[7]), "(\\d{4})/(\\d{2})/(\\d{2})"));
-    match_map.insert(std::pair<int, std::string>(generateKey(date_set[8]), "(\\d{4}).(\\d{2}).(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(date_set[8]), "(\\d{4})-(\\d{2})-(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(date_set[9]), "(\\d{4})/(\\d{2})/(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(date_set[10]), "(\\d{4}).(\\d{2}).(\\d{2})"));
+    match_map.insert(std::pair<int, std::string>(generateKey(date_set[11]), "(\\d{4})\\\\(\\d{2})\\\\(\\d{2})"));
 
     /* Create the class object, get result and compare with pattern */
     for (int i = 0; i < kMaxDateSets; i++) {

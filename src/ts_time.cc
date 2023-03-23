@@ -55,12 +55,19 @@ const std::string Time::Get() const
 
     time_t tt = system_clock::to_time_t(now);
     tm local_tm = *localtime(&tt);
+    tm utc_tm = *gmtime(&tt);
 
-    auto hours = local_tm.tm_hour;
-    auto mins = local_tm.tm_min;
-    auto secs = local_tm.tm_sec;
-    auto msec = ms.count();
-    auto offset = local_tm.tm_gmtoff;
+    int hours = 0, mins = 0;
+    if (this->show_offset) {
+        hours = utc_tm.tm_hour;
+        mins = utc_tm.tm_min;
+    } else {
+        hours = local_tm.tm_hour;
+        mins = local_tm.tm_min;
+    }
+    int offset = local_tm.tm_gmtoff;
+    int secs = local_tm.tm_sec;
+    int msec = ms.count();
     char offset_char;
     if (offset < 0)
         offset_char = '-';
@@ -74,70 +81,64 @@ const std::string Time::Get() const
     std::stringstream string_stream;
 
     switch (this->time_format) {
-        case timestamp::Time::TimeFormat::TIME_24_H:
-            if (show_offset && show_msec) {
-                string_stream << AuxStamp::Format(2, hours) << ":"
-                    << AuxStamp::Format(2, mins) << ":"
-                    << AuxStamp::Format(2, secs) << "."
-                    << AuxStamp::Format(3, msec) << " UTC " << offset_char
-                    << AuxStamp::Format(2, offset_hours)
-                    << AuxStamp::Format(2, offset_mins);
-                return string_stream.str();
-            } else if (show_offset && !show_msec) {
-                string_stream << AuxStamp::Format(2, hours) << ":"
-                              << AuxStamp::Format(2, mins) << ":"
-                              << AuxStamp::Format(2, secs) << " UTC " << offset_char
-                              << AuxStamp::Format(2, offset_hours)
-                              << AuxStamp::Format(2, offset_mins);
-                return string_stream.str();
-            } else if (!show_offset && show_msec) {
-                string_stream << AuxStamp::Format(2, hours) << ":"
-                    << AuxStamp::Format(2, mins) << ":"
-                    << AuxStamp::Format(2, secs) << "."
-                    << AuxStamp::Format(3, msec);
-                return string_stream.str();
-            } else {
-                string_stream << AuxStamp::Format(2, hours) << ":"
-                              << AuxStamp::Format(2, mins) << ":"
-                              << AuxStamp::Format(2, secs);
-                return string_stream.str();
-            }
-            break;
-        case timestamp::Time::TimeFormat::TIME_12_H:
-            if (show_offset && show_msec) {
-                string_stream << AuxStamp::Format(2, time_period.first) << ":"
-                    << AuxStamp::Format(2, mins) << ":"
-                    << AuxStamp::Format(2, secs) << "."
-                    << AuxStamp::Format(3, msec) << " " << time_period.second
-                    << " UTC " << offset_char << AuxStamp::Format(2, offset_hours)
-                    << AuxStamp::Format(2, offset_mins);
-                return string_stream.str();
-            } else if (show_offset && !show_msec) {
-                string_stream << AuxStamp::Format(2, time_period.first) << ":"
-                              << AuxStamp::Format(2, mins) << ":"
-                              << AuxStamp::Format(2, secs) << " " << time_period.second
-                              << " UTC " << offset_char
-                              << AuxStamp::Format(2, offset_hours)
-                              << AuxStamp::Format(2, offset_mins);
-                return string_stream.str();
-            } else if (!show_offset && show_msec) {
-                string_stream << AuxStamp::Format(2, time_period.first) << ":"
-                    << AuxStamp::Format(2, mins) << ":"
-                    << AuxStamp::Format(2, secs) << "."
-                    << AuxStamp::Format(3, msec) << " " << time_period.second;
-                return string_stream.str();
-            } else {
-                string_stream << AuxStamp::Format(2, time_period.first) << ":"
-                              << AuxStamp::Format(2, mins) << ":"
-                              << AuxStamp::Format(2, secs) << " "
-                              << time_period.second;
-                return string_stream.str();
-            }
-            break;
+        case Time::TimeFormat::TIME_24_H: {
+            string_stream << AuxStamp::Format(2, hours) << ":"
+                          << AuxStamp::Format(2, mins) << ":"
+                          << AuxStamp::Format(2, secs)
+                          << GetMsec(msec)
+                          << GetOffset(offset_char, offset_hours, offset_mins);
+            return string_stream.str();
+        }
+        case Time::TimeFormat::TIME_12_H: {
+            string_stream << AuxStamp::Format(2, time_period.first) << ":"
+                          << AuxStamp::Format(2, mins) << ":"
+                          << AuxStamp::Format(2, secs)
+                          << GetMsec(msec)
+                          << " " << time_period.second
+                          << GetOffset(offset_char, offset_hours, offset_mins);
+            return string_stream.str();
+        }
         default:
-            return "";
+            throw std::invalid_argument( "Time format is invalid" );
     }
-    return "";
+}
+
+
+/**
+ *  GetOffset - builds string with offset if it is required
+ *
+ *  @offset_char: minus or plus before the offset to specify if the time is ahead or behind UTC
+ *  @offset_hour: actual offset in hours
+ *  @offset_mins: actual offset in minutes
+ *
+ *  When required the method build a string with offset from UTC time in the format
+ *  UTC +/-HHMM
+ */
+const std::string Time::GetOffset(char offset_char, int offset_hours, int offset_mins) const
+{
+    if (!this->show_offset)
+        return "";
+    std::stringstream string_stream;
+    string_stream << " UTC " << offset_char
+                  << AuxStamp::Format(2, offset_hours)
+                  << AuxStamp::Format(2, offset_mins);
+    return string_stream.str();
+}
+
+/**
+ *  GetMsec - builds string with milliseconds if it is required
+ *
+ *  @msec: milliseconds to add to time
+ *
+ *  When required the method build a string with milliseconds.
+ */
+const std::string Time::GetMsec(int msec) const
+{
+    if (!this->show_msec)
+        return "";
+    std::stringstream string_stream;
+    string_stream << "." <<  AuxStamp::Format(3, msec);
+    return string_stream.str();
 }
 
 /**

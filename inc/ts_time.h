@@ -18,6 +18,8 @@ private:
     TimeFormat time_format;
     bool show_offset;
     bool show_msec;
+    const std::string GetOffset(char offset_char, int offset_hours, int offset_mins) const;
+    const std::string GetMsec(int msec) const;
     const PairIntString GetPeriod(const int hours) const;
 };
 

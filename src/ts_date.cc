@@ -1,5 +1,6 @@
 #include "ts_date.h"
 #include <iostream>
+#include <stdexcept>
 
 namespace timestamp {
 
@@ -14,6 +15,25 @@ namespace timestamp {
 Date::Date(const DateSeparator & _date_separator, const DateFormat & _date_format) :
     date_separator(_date_separator), date_format(_date_format)
 {}
+
+/**
+ *  FormatToChar - returns separator as char
+ */
+const std::string Date::SeparatorToChar() const
+{
+    switch (this->date_separator) {
+        case Date::DateSeparator::DASH:
+            return "-";
+        case Date::DateSeparator::SLASH:
+            return "/";
+        case Date::DateSeparator::BACKSLASH:
+            return "\\";
+        case Date::DateSeparator::DOT:
+            return ".";
+        default:
+            throw std::invalid_argument( "Date separator is invalid" );
+    }
+}
 
 /**
  *  Get - return date in specific format
@@ -32,77 +52,35 @@ const std::string Date::Get() const
     int year = local_tm.tm_year + 1900;
 
     std::stringstream string_stream;
+    std::string order[3];
 
     switch (this->date_format) {
-        case timestamp::Date::DateFormat::DMY:
-            switch (this->date_separator) {
-                case timestamp::Date::DateSeparator::DASH:
-                    string_stream << AuxStamp::Format(2, day) << "-"
-                                  << AuxStamp::Format(2, month) << "-"
-                                  << AuxStamp::Format(4, year);
-                    return string_stream.str();
-                case timestamp::Date::DateSeparator::DOT:
-                    string_stream << AuxStamp::Format(2, day) << "."
-                                  << AuxStamp::Format(2, month) << "."
-                                  << AuxStamp::Format(4, year);
-                    return string_stream.str();
-                case timestamp::Date::DateSeparator::SLASH:
-                    string_stream << AuxStamp::Format(2, day) << "/"
-                                  << AuxStamp::Format(2, month) << "/"
-                                  << AuxStamp::Format(4, year);
-                    return string_stream.str();
-                default:
-                    return "";
-            }
-            ;
+        case Date::DateFormat::DMY: {
+            order[0] = AuxStamp::Format(2, day);
+            order[1] = AuxStamp::Format(2, month);
+            order[2] = AuxStamp::Format(4, year);
             break;
-        case timestamp::Date::DateFormat::MDY:
-            switch (this->date_separator) {
-                case timestamp::Date::DateSeparator::DASH:
-                    string_stream << AuxStamp::Format(2, month) << "-"
-                                  << AuxStamp::Format(2, day) << "-"
-                                  << AuxStamp::Format(4, year);
-                    return string_stream.str();
-                case timestamp::Date::DateSeparator::DOT:
-                    string_stream << AuxStamp::Format(2, month) << "."
-                                  << AuxStamp::Format(2, day) << "."
-                                  << AuxStamp::Format(4, year);
-                    return string_stream.str();
-                case timestamp::Date::DateSeparator::SLASH:
-                    string_stream << AuxStamp::Format(2, month) << "/"
-                                  << AuxStamp::Format(2, day) << "/"
-                                  << AuxStamp::Format(4, year);
-                    return string_stream.str();
-                default:
-                    return "";
-            }
-            ;
+        }
+        case Date::DateFormat::MDY: {
+            order[0] = AuxStamp::Format(2, month);
+            order[1] = AuxStamp::Format(2, day);
+            order[2] = AuxStamp::Format(4, year);
             break;
-        case timestamp::Date::DateFormat::YMD:
-            switch (this->date_separator) {
-                case timestamp::Date::DateSeparator::DASH:
-                    string_stream << AuxStamp::Format(4, year) << "-"
-                                  << AuxStamp::Format(2, day) << "-"
-                                  << AuxStamp::Format(2, month);
-                    return string_stream.str();
-                case timestamp::Date::DateSeparator::DOT:
-                    string_stream << AuxStamp::Format(4, year) << "."
-                                  << AuxStamp::Format(2, day) << "."
-                                  << AuxStamp::Format(2, month);
-                    return string_stream.str();
-                case timestamp::Date::DateSeparator::SLASH:
-                    string_stream << AuxStamp::Format(4, year) << "/"
-                                  << AuxStamp::Format(2, day) << "/"
-                                  << AuxStamp::Format(2, month);
-                    return string_stream.str();
-                default:
-                    return "";
-            }
-            ;
+        }
+        case Date::DateFormat::YMD: {
+            order[0] = AuxStamp::Format(4, year);
+            order[1] = AuxStamp::Format(2, month);
+            order[2] = AuxStamp::Format(2, day);
             break;
+        }
         default:
-            return "";
-    };
+            throw std::invalid_argument( "Date format is not invalid" );
+    }
+
+    string_stream << order[0] << Date::SeparatorToChar()
+                  << order[1] << Date::SeparatorToChar()
+                  << order[2];
+    return string_stream.str();
 }
 
 } // namespace timestamp

@@ -6,7 +6,7 @@
 
 class DateUt : public UnitTest {
 private:
-    const int kMaxDateSets = 9;
+    const int kMaxDateSets = 12;
     const std::string TYPE = "Date";
     typedef struct property_set {
         timestamp::Date::DateFormat date_format;
