@@ -44,6 +44,7 @@ add_test(NAME raw_test COMMAND ${TESTS_DIR}/raw_test)
 #Define type of the library
 if(PROJECT_LIBRARY_TYPE STREQUAL "Shared")
 add_library(timestamp SHARED
+  ${TS_PROJECT_SOURCE_DIR}/c_api.cc
   ${TS_PROJECT_SOURCE_DIR}/ts_date.cc
   ${TS_PROJECT_SOURCE_DIR}/ts_raw.cc
   ${TS_PROJECT_SOURCE_DIR}/ts_stamp.cc
@@ -52,6 +53,7 @@ add_library(timestamp SHARED
 )
 else()
   add_library(timestamp STATIC
+  ${TS_PROJECT_SOURCE_DIR}/c_api.cc
   ${TS_PROJECT_SOURCE_DIR}/ts_date.cc
   ${TS_PROJECT_SOURCE_DIR}/ts_raw.cc
   ${TS_PROJECT_SOURCE_DIR}/ts_stamp.cc
@@ -61,6 +63,7 @@ else()
 endif()
 
 set(TS_HEADERS
+ ${TS_PROJECT_INCLUDE_DIR}/c_api.h
  ${TS_PROJECT_INCLUDE_DIR}/timestamp.h
  ${TS_PROJECT_INCLUDE_DIR}/ts_timestamp.h
  ${TS_PROJECT_INCLUDE_DIR}/ts_stamp.h
