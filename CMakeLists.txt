@@ -24,8 +24,9 @@ endif(NOT PROJECT_LIBRARY_TYPE)
 include_directories(${TS_PROJECT_INCLUDE_DIR})
 
 #Compilator's flags
-SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++11 -Wall -Werror")
-add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Werror")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 #Test block
 include(${TS_PROJECT_ROOT_DIR}/tests/CMakeLists.txt)
@@ -94,6 +95,27 @@ configure_file(${TS_PROJECT_ROOT_DIR}/timestamp.pc.in ${TS_PROJECT_ROOT_DIR}/tim
 
 target_include_directories(timestamp PRIVATE ${TS_PROJECT_SOURCE_DIR})
 target_include_directories(timestamp PRIVATE ${TS_PROJECT_INCLUDE_DIR})
+
+#Define default library name
+if(NOT LIBRARY_NAME)
+  set(LIBRARY_NAME "timestamp")
+endif(NOT LIBRARY_NAME)
+
+if(PROJECT_LIBRARY_TYPE STREQUAL "Shared")
+
+add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD
+  COMMAND "/usr/bin/strip" -S -g -d --strip-debug
+  "${TS_PROJECT_ROOT_DIR}/lib/lib${LIBRARY_NAME}.so"
+  COMMENT "Strip debug symbols done on final binary.")
+
+else()
+
+add_custom_command(TARGET timestamp POST_BUILD
+  COMMAND "/usr/bin/strip" -S -g -d --strip-debug
+  "${TS_PROJECT_ROOT_DIR}/lib/lib${LIBRARY_NAME}.a"
+  COMMENT "Strip debug symbols done on final binary.")
+
+endif()
 
 install(TARGETS timestamp
   ARCHIVE DESTINATION "${TS_PROJECT_OUTPUT_LIBRARY}"

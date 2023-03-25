@@ -1,26 +1,25 @@
 #include "c_api.h"
 #include <cstring>
 
-std::unique_ptr < Timestamp > timestamp_obj;
-
-void NewTimestamp()
+timestamp_t NewTimestamp()
 {
-    if (timestamp_obj)
-        return;
-    timestamp_obj = std::unique_ptr < Timestamp >
-                (new Timestamp(Timestamp::TimestampFormat::DMY));
+    return reinterpret_cast<timestamp_t>(new Timestamp(Timestamp::TimestampFormat::DMY));
 }
 
-const char *  Get()
+void FreeTimestamp(timestamp_t timestamp_ptr)
 {
-    static char result[256];
+    delete reinterpret_cast<Timestamp*>(timestamp_ptr);
+}
 
-    memset(result, 0, 256);
+const char * GetTimestamp(timestamp_t timestamp_ptr)
+{
+    static char result[MAX_TIMESTAMP_SIZE];
 
-    if (timestamp_obj) {
-        strncpy(result, timestamp_obj->Get().c_str(), 256);
-        return result;
-    }
+    if (!timestamp_ptr)
+        return "";
 
-    return "";
+    memset(result, 0, MAX_TIMESTAMP_SIZE);
+    strncpy(result, reinterpret_cast<Timestamp*>(timestamp_ptr)->Get().c_str(), MAX_TIMESTAMP_SIZE-1);
+    result[MAX_TIMESTAMP_SIZE-1] = 0;
+    return result;
 }

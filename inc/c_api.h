@@ -17,7 +17,15 @@
 
 //============ C-interface for class Runstat ============//
 
-EXPORT_C void    NewTimestamp();
-EXPORT_C const char *  Get();
+#define MAX_TIMESTAMP_SIZE 64
+
+struct Timestamp;
+
+typedef struct Timestamp Timestamp;
+typedef struct Timestamp* timestamp_t;
+
+EXPORT_C timestamp_t NewTimestamp();
+EXPORT_C const char * GetTimestamp(timestamp_t tiemstamp_ptr);
+EXPORT_C void FreeTimestamp(timestamp_t timestamp_ptr);
 
 #endif
