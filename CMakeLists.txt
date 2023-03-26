@@ -65,12 +65,12 @@ endif()
 
 set(TS_HEADERS
  ${TS_PROJECT_INCLUDE_DIR}/c_api.h
- ${TS_PROJECT_INCLUDE_DIR}/timestamp.h
- ${TS_PROJECT_INCLUDE_DIR}/ts_timestamp.h
- ${TS_PROJECT_INCLUDE_DIR}/ts_stamp.h
- ${TS_PROJECT_INCLUDE_DIR}/ts_time.h
- ${TS_PROJECT_INCLUDE_DIR}/ts_raw.h
- ${TS_PROJECT_INCLUDE_DIR}/ts_date.h
+ ${TS_PROJECT_INCLUDE_DIR}/timestamp.hh
+ ${TS_PROJECT_INCLUDE_DIR}/ts_timestamp.hh
+ ${TS_PROJECT_INCLUDE_DIR}/ts_stamp.hh
+ ${TS_PROJECT_INCLUDE_DIR}/ts_time.hh
+ ${TS_PROJECT_INCLUDE_DIR}/ts_raw.hh
+ ${TS_PROJECT_INCLUDE_DIR}/ts_date.hh
 )
 
 #Test block added here as well in order to run the tests

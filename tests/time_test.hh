@@ -1,8 +1,8 @@
 #ifndef TIME_TEST_H_
 #define TIME_TEST_H_
 
-#include "unit_test.h"
-#include "ts_time.h"
+#include "unit_test.hh"
+#include "ts_time.hh"
 
 class TimeUt : public UnitTest {
 private:

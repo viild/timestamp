@@ -2,7 +2,7 @@
 #define TS_DATE_H_
 
 #include <chrono>
-#include "ts_stamp.h"
+#include "ts_stamp.hh"
 
 namespace timestamp {
 

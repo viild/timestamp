@@ -1,8 +1,8 @@
 #ifndef RAW_TEST_H_
 #define RAW_TEST_H_
 
-#include "unit_test.h"
-#include "ts_raw.h"
+#include "unit_test.hh"
+#include "ts_raw.hh"
 
 class RawUt : public UnitTest {
 private:

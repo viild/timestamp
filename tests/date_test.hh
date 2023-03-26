@@ -1,8 +1,8 @@
 #ifndef DATE_TEST_H_
 #define DATE_TEST_H_
 
-#include "unit_test.h"
-#include "ts_date.h"
+#include "unit_test.hh"
+#include "ts_date.hh"
 
 class DateUt : public UnitTest {
 private:

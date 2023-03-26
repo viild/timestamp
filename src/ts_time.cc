@@ -1,4 +1,4 @@
-#include "ts_time.h"
+#include "ts_time.hh"
 
 namespace timestamp {
 

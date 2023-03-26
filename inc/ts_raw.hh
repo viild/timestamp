@@ -1,7 +1,7 @@
 #ifndef TS_RAW_H_
 #define TS_RAW_H_
 
-#include "ts_stamp.h"
+#include "ts_stamp.hh"
 
 namespace timestamp {
 

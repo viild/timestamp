@@ -11,7 +11,7 @@
 #ifdef __cplusplus  // Enabled only for C++ compilers
 
 #include <iostream>
-#include "timestamp.h"
+#include "timestamp.hh"
 
 #endif //-- End of __cplusplus definition //
 

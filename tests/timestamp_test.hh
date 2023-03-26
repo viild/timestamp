@@ -1,10 +1,10 @@
 #ifndef TIMESTAMP_TEST_H_
 #define TIMESTAMP_TEST_H_
 
-#include "unit_test.h"
-#include "ts_timestamp.h"
-#include "ts_time.h"
-#include "ts_date.h"
+#include "unit_test.hh"
+#include "ts_timestamp.hh"
+#include "ts_time.hh"
+#include "ts_date.hh"
 
 class TimestampUt : public UnitTest {
 private:

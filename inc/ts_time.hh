@@ -1,7 +1,7 @@
 #ifndef TS_TIME_H_
 #define TS_TIME_H_
 
-#include "ts_stamp.h"
+#include "ts_stamp.hh"
 #include <cassert>
 #include <cstdlib>
 #include <chrono>

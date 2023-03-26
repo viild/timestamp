@@ -3,10 +3,10 @@
 #include <cstdio>
 #include <iomanip>
 
-#include "time_test.h"
-#include "date_test.h"
-#include "raw_test.h"
-#include "timestamp_test.h"
+#include "time_test.hh"
+#include "date_test.hh"
+#include "raw_test.hh"
+#include "timestamp_test.hh"
 
 int countSuccessfull(std::string file, int res)
 {

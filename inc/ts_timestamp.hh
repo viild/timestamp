@@ -2,9 +2,9 @@
 #define TS_TIMESTAMP_H_
 
 #include <memory>
-#include "ts_time.h"
-#include "ts_date.h"
-#include "ts_raw.h"
+#include "ts_time.hh"
+#include "ts_date.hh"
+#include "ts_raw.hh"
 
 class Timestamp {
 public:

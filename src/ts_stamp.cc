@@ -1,4 +1,4 @@
-#include "ts_stamp.h"
+#include "ts_stamp.hh"
 
 /**
  *  Format - sets number and fills the rest with 0

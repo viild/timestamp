@@ -1,4 +1,4 @@
-#include "time_test.h"
+#include "time_test.hh"
 
 #ifdef SEPARATE_TEST_BUILD
 int main(int argc, char * argv[])

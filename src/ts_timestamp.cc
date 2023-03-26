@@ -1,4 +1,4 @@
-#include "ts_timestamp.h"
+#include "ts_timestamp.hh"
 
 /**
  *  Timestamp - class constructor

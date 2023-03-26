@@ -1,4 +1,4 @@
-#include "raw_test.h"
+#include "raw_test.hh"
 
 #ifdef SEPARATE_TEST_BUILD
 int main(int argc, char * argv[])

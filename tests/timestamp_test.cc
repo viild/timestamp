@@ -1,4 +1,4 @@
-#include "timestamp_test.h"
+#include "timestamp_test.hh"
 
 #ifdef SEPARATE_TEST_BUILD
 int main(int argc, char * argv[])
