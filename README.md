@@ -122,3 +122,46 @@ Output:
 2023/03/27 13:58:03
 03.27.2023 01:58:03.822 PM UTC +0200
 ```
+
+### C
+
+The project provides C API to work with the Timestamp class in C code. The header file "c_api.h" should be included to get access to the C-related procedures. No more header files should be included in an application.
+
+In order to use Timestamp functionality one of the following procedures should be called to get the pointer:
+
+* NewTimestamp();
+* NewTimestampSpecific(TimestampFormat timestamp_format, DateSeparator date_separator, TimeFormat time_format, Bool show_offset, Bool show_msec);
+* NewTimestampDateOnly(TimestampFormat timestamp_format, DateSeparator date_separator);
+* NewTimestampTimeOnly(TimeFormat time_format, Bool show_offset, Bool show_msec);
+* NewTimestampRaw();
+
+The parameters for these procedures should be used from specially designed enumerations for the C code:
+
+```
+typedef enum {
+  DMY,
+  MDY,
+  YMD
+} TimestampFormat;
+
+typedef enum {
+  SLASH,
+  BACKSLASH,
+  DOT,
+  DASH
+} DateSeparator;
+
+typedef enum {
+  TIME_12_H_FORMAT,
+  TIME_24_H_FORMAT
+} TimeFormat;
+
+typedef enum {
+  FALSE,
+  TRUE
+} Bool;
+```
+
+Unlike C++, C pointers are not cleared automatically. In order to correctly clear the pointer, use the procedure FreeTimestamp(timestamp_t timestamp_ptr). It deletes Timestamp object in the library using "delete" keyword.
+
+In order to print timestamp where it is necessary, use the procedure "GetTimestamp(timestamp_t tiemstamp_ptr)" where the only argument is the timestamp pointer. It returns C string limited with 64 characters including NULL at the end.
