@@ -3,7 +3,11 @@
 
 timestamp_t NewTimestamp()
 {
-    return reinterpret_cast<timestamp_t>(new Timestamp(Timestamp::TimestampFormat::DMY));
+    try {
+        return reinterpret_cast<timestamp_t>(new Timestamp(Timestamp::TimestampFormat::DMY));
+    } catch (...) {
+        return NULL;
+    }
 }
 
 EXPORT_C timestamp_t NewTimestampSpecific(TimestampFormat timestamp_format, DateSeparator date_separator,
@@ -92,8 +96,12 @@ EXPORT_C timestamp_t NewTimestampSpecific(TimestampFormat timestamp_format, Date
             return NULL;
     }
 
-    return reinterpret_cast<timestamp_t>(new Timestamp(timestamp_format_cpp,
-                date_separator_cpp, time_format_cpp, show_offset_cpp, show_msec_cpp));
+    try {
+        return reinterpret_cast<timestamp_t>(new Timestamp(timestamp_format_cpp,
+                    date_separator_cpp, time_format_cpp, show_offset_cpp, show_msec_cpp));
+    } catch (...) {
+        return NULL;
+    }
 }
 
 EXPORT_C timestamp_t NewTimestampDateOnly(TimestampFormat timestamp_format, DateSeparator date_separator)
@@ -139,7 +147,11 @@ EXPORT_C timestamp_t NewTimestampDateOnly(TimestampFormat timestamp_format, Date
             return NULL;
     }
 
-    return reinterpret_cast<timestamp_t>(new Timestamp(timestamp_format_cpp, date_separator_cpp));
+    try {
+        return reinterpret_cast<timestamp_t>(new Timestamp(timestamp_format_cpp, date_separator_cpp));
+    } catch (...) {
+        return NULL;
+    }
 }
 
 EXPORT_C timestamp_t NewTimestampTimeOnly(TimeFormat time_format, Bool show_offset, Bool show_msec)
@@ -187,18 +199,30 @@ EXPORT_C timestamp_t NewTimestampTimeOnly(TimeFormat time_format, Bool show_offs
             return NULL;
     }
 
-    return reinterpret_cast<timestamp_t>(new Timestamp(Timestamp::TimestampFormat::TIME_ONLY,
-                            time_format_cpp, show_offset_cpp, show_msec_cpp));
+    try {
+        return reinterpret_cast<timestamp_t>(new Timestamp(Timestamp::TimestampFormat::TIME_ONLY,
+                                time_format_cpp, show_offset_cpp, show_msec_cpp));
+    } catch (...) {
+        return NULL;
+    }
 }
 
 EXPORT_C timestamp_t NewTimestampRaw()
 {
-    return reinterpret_cast<timestamp_t>(new Timestamp(Timestamp::TimestampFormat::RAW));
+    try {
+        return reinterpret_cast<timestamp_t>(new Timestamp(Timestamp::TimestampFormat::RAW));
+    } catch (...) {
+        return NULL;
+    }
 }
 
 void FreeTimestamp(timestamp_t timestamp_ptr)
 {
-    delete reinterpret_cast<Timestamp*>(timestamp_ptr);
+    try {
+        delete reinterpret_cast<Timestamp*>(timestamp_ptr);
+    } catch (...) {
+        exit(127);
+    }
 }
 
 const char * GetTimestamp(timestamp_t timestamp_ptr)
@@ -208,8 +232,12 @@ const char * GetTimestamp(timestamp_t timestamp_ptr)
     if (!timestamp_ptr)
         return "";
 
-    memset(result, 0, MAX_TIMESTAMP_SIZE);
-    strncpy(result, reinterpret_cast<Timestamp*>(timestamp_ptr)->Get().c_str(), MAX_TIMESTAMP_SIZE-1);
-    result[MAX_TIMESTAMP_SIZE-1] = 0;
-    return result;
+    try {
+        memset(result, 0, MAX_TIMESTAMP_SIZE);
+        strncpy(result, reinterpret_cast<Timestamp*>(timestamp_ptr)->Get().c_str(), MAX_TIMESTAMP_SIZE-1);
+        result[MAX_TIMESTAMP_SIZE-1] = 0;
+        return result;
+    } catch (...) {
+        return "";
+    }
 }
