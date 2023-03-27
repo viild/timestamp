@@ -54,7 +54,7 @@ If set, the time is shown with some offset from the cuurent UTC.
 
 Example:
 
-20:27:02.<b>278</b> UTC +0200
+20:27:02.**278** UTC +0200
 
 ## Configuring the project
 
@@ -80,7 +80,8 @@ To be able to build different types of libraries for the project is is required 
 
 The project uses automatically generated Makefile file. Firstly generate the file with CMake command.
 
-Run "make" command to build the library and place the files localy.<br/>
+Run "make" command to build the library and place the files localy.
+
 Run "make install" command to build the library and install the files. The headers are placed at "/usr/local/include/wlc", the libraries are placed at "/usr/local/lib".
 
 ## Usage
@@ -97,14 +98,27 @@ Example:
 
 Code:
 
-<code>#include <wlc/timestamp.h>
+```
+#include <wlc/timestamp.h>
 #include <iostream>
 
 int main(int argc, char *argv[])
 {
-    Timestamp timestamp_1(Timestamp::TimestampFormat::DMY);
-    Timestamp timestamp_2(Timestamp::TimestampFormat::YMD, timestamp::Date::DateSeparator::BACKSLASH);
+    Timestamp timestamp_1(Timestamp::TimestampFormat::DMY); /* DMY format with slash separation in date, the time in 24H format, without showing offset and milliseconds */
+    Timestamp timestamp_2(Timestamp::TimestampFormat::YMD, timestamp::Date::DateSeparator::BACKSLASH); /* YMD format with backslash separation in date, the time in 24H format, without showing offset and milliseconds */
     Timestamp timestamp_3(Timestamp::TimestampFormat::MDY, timestamp::Date::DateSeparator::DOT, 
-                          timestamp::Time::TimeFormat::TIME_24_H, true, true);
+                          timestamp::Time::TimeFormat::TIME_12_H, true, true); /* MDY format with dot separation in date, the time in 12H format, with showing offset and milliseconds */
+                          
+    std::cout << timestamp_1.Get() << std::endl;
+    std::cout << timestamp_2.Get() << std::endl;
+    std::cout << timestamp_3.Get() << std::endl;
 }
-</code>
+```
+
+Output:
+
+```
+27/03/2023 13:58:03
+2023/03/27 13:58:03
+03.27.2023 01:58:03.822 PM UTC +0200
+```
