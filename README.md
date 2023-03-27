@@ -82,7 +82,7 @@ The project uses automatically generated Makefile file. Firstly generate the fil
 
 Run "make" command to build the library and place the files localy.
 
-Run "make install" command to build the library and install the files. The headers are placed at "/usr/local/include/wlc", the libraries are placed at "/usr/local/lib".
+Run "make install" command to build the library and install the files. The headers are placed at "/usr/local/include/wlc/timestamp/", the libraries are placed at "/usr/local/lib/wlc/".
 
 ## Usage
 
@@ -99,7 +99,7 @@ Example:
 Code:
 
 ```
-#include <wlc/timestamp.h>
+#include <wlc/timestamp/timestamp.h>
 #include <iostream>
 
 int main(int argc, char *argv[])
