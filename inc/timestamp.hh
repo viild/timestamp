@@ -84,6 +84,31 @@ private:
 
             friend class Timestamp;
             friend class TimestampBuilder;
+        public:
+            TimestampFormat_t GetTimestampFormat() {
+                return timestamp_format;
+            }
+            DateSeparator_t GetDateSeparator() {
+                return date_separator;
+            }
+            TimeFormat_t GetTimeFormat() {
+                return time_format;
+            }
+            TimeType_t GetTimeType() {
+                return time_type;
+            }
+            TimeDateAppearance_t GetTimeDateAppearance() {
+                return time_date_appearance;
+            }
+            bool GetUtcOffset() {
+                return show_utc_offset;
+            }
+            bool GetSeconds() {
+                return show_seconds;
+            }
+            bool GetMilliseconds() {
+                return show_milliseconds;
+            }
     };
 
 public:
@@ -144,10 +169,6 @@ public:
     };
 
 private:
-    Timestamp(const TimestampOptions & options) : options(options) {}
-    Timestamp(const Timestamp & timestamp);
-    Timestamp & operator=(const Timestamp & timestamp);
-
     TimestampOptions options;
 
     const std::string GetDate(time_t & tt) const;
@@ -158,7 +179,14 @@ private:
     const std::pair<int, std::string> GetPeriod(const int hours) const;
 
 public:
+    Timestamp(const TimestampOptions & options) : options(options) {}
+    Timestamp(const Timestamp & timestamp);
+    Timestamp & operator=(const Timestamp & timestamp);
+
     const std::string Get() const;
+    TimestampOptions GetTimestampOptions() {
+        return options;
+    }
 };
 
 #endif /* TIMESTAMP_H_ */
