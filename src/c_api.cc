@@ -4,32 +4,38 @@
 timestamp_t NewTimestamp()
 {
     try {
-        return reinterpret_cast<timestamp_t>(new Timestamp(Timestamp::TimestampFormat::DMY));
+        return reinterpret_cast<timestamp_t>(Timestamp::TimestampBuilder().BuildPointer());
     } catch (...) {
         return NULL;
     }
 }
 
 EXPORT_C timestamp_t NewTimestampSpecific(TimestampFormat timestamp_format, DateSeparator date_separator,
-                                          TimeFormat time_format, Bool show_offset, Bool show_msec)
+                                          TimeFormat time_format, TimeType time_type, TimeDateAppearance time_date_appearance,
+                                          Bool show_utc_offset, Bool show_seconds, Bool show_milliseconds)
 {
+
     Timestamp::TimestampFormat timestamp_format_cpp;
-    timestamp::Date::DateSeparator date_separator_cpp;
-    timestamp::Time::TimeFormat time_format_cpp;
-    bool show_offset_cpp;
-    bool show_msec_cpp;
+    Timestamp::DateSeparator date_separator_cpp;
+    Timestamp::TimeFormat time_format_cpp;
+    Timestamp::TimeType time_type_cpp;
+    Timestamp::TimeDateAppearance time_date_appearance_cpp;
 
     switch (timestamp_format) {
-        case DMY: {
-            timestamp_format_cpp = Timestamp::TimestampFormat::DMY;
+        case DAY_MONTH_YEAR: {
+            timestamp_format_cpp = Timestamp::TimestampFormat::DAY_MONTH_YEAR;
             break;
         }
-        case MDY: {
-            timestamp_format_cpp = Timestamp::TimestampFormat::MDY;
+        case MONTH_DAY_YEAR: {
+            timestamp_format_cpp = Timestamp::TimestampFormat::MONTH_DAY_YEAR;
             break;
         }
-        case YMD: {
-            timestamp_format_cpp = Timestamp::TimestampFormat::YMD;
+        case YEAR_MONTH_DAY: {
+            timestamp_format_cpp = Timestamp::TimestampFormat::YEAR_MONTH_DAY;
+            break;
+        }
+        case RAW: {
+            timestamp_format_cpp = Timestamp::TimestampFormat::RAW;
             break;
         }
         default:
@@ -38,19 +44,19 @@ EXPORT_C timestamp_t NewTimestampSpecific(TimestampFormat timestamp_format, Date
 
     switch (date_separator) {
         case SLASH: {
-            date_separator_cpp = timestamp::Date::DateSeparator::SLASH;
+            date_separator_cpp = Timestamp::DateSeparator::SLASH;
             break;
         }
         case BACKSLASH: {
-            date_separator_cpp = timestamp::Date::DateSeparator::BACKSLASH;
+            date_separator_cpp = Timestamp::DateSeparator::BACKSLASH;
             break;
         }
         case DOT: {
-            date_separator_cpp = timestamp::Date::DateSeparator::DOT;
+            date_separator_cpp = Timestamp::DateSeparator::DOT;
             break;
         }
         case DASH: {
-            date_separator_cpp = timestamp::Date::DateSeparator::DASH;
+            date_separator_cpp = Timestamp::DateSeparator::DASH;
             break;
         }
         default:
@@ -58,159 +64,63 @@ EXPORT_C timestamp_t NewTimestampSpecific(TimestampFormat timestamp_format, Date
     }
 
     switch (time_format) {
-        case TIME_12_H_FORMAT: {
-            time_format_cpp = timestamp::Time::TimeFormat::TIME_12_H;
+        case TIME_12_H: {
+            time_format_cpp = Timestamp::TimeFormat::TIME_12_H;
             break;
         }
-        case TIME_24_H_FORMAT: {
-            time_format_cpp = timestamp::Time::TimeFormat::TIME_24_H;
-            break;
-        }
-        default:
-            return NULL;
-    }
-
-    switch (show_offset) {
-        case FALSE: {
-            show_offset_cpp = false;
-            break;
-        }
-        case TRUE: {
-            show_offset_cpp = true;
+        case TIME_24_H: {
+            time_format_cpp = Timestamp::TimeFormat::TIME_24_H;
             break;
         }
         default:
             return NULL;
     }
 
-    switch (show_msec) {
-        case FALSE: {
-            show_msec_cpp = false;
+    switch (time_type) {
+        case LOCAL: {
+            time_type_cpp = Timestamp::TimeType::LOCAL;
             break;
         }
-        case TRUE: {
-            show_msec_cpp = true;
+        case GMT: {
+            time_type_cpp = Timestamp::TimeType::GMT;
             break;
         }
         default:
             return NULL;
     }
+
+    switch (time_date_appearance) {
+        case ALL: {
+            time_date_appearance_cpp = Timestamp::TimeDateAppearance::ALL;
+            break;
+        }
+        case TIME_ONLY: {
+            time_date_appearance_cpp = Timestamp::TimeDateAppearance::TIME_ONLY;
+            break;
+        }
+        case DATE_ONLY: {
+            time_date_appearance_cpp = Timestamp::TimeDateAppearance::DATE_ONLY;
+            break;
+        }
+        default:
+            return NULL;
+    }
+
+    Timestamp::TimestampBuilder timestamp_builder = Timestamp::TimestampBuilder().SetTimestampFormat(timestamp_format_cpp).
+                SetDateSeparator(date_separator_cpp). SetTimeFormat(time_format_cpp).SetTimeType(time_type_cpp).
+                SetTimeDateAppearance(time_date_appearance_cpp);
+
+    if (show_utc_offset == TRUE)
+        timestamp_builder.AddUtcOffset();
+    
+    if (show_seconds == TRUE)
+        timestamp_builder.AddSeconds();
+
+    if (show_milliseconds == TRUE)
+        timestamp_builder.AddMilliseconds();
 
     try {
-        return reinterpret_cast<timestamp_t>(new Timestamp(timestamp_format_cpp,
-                    date_separator_cpp, time_format_cpp, show_offset_cpp, show_msec_cpp));
-    } catch (...) {
-        return NULL;
-    }
-}
-
-EXPORT_C timestamp_t NewTimestampDateOnly(TimestampFormat timestamp_format, DateSeparator date_separator)
-{
-    Timestamp::TimestampFormat timestamp_format_cpp;
-    timestamp::Date::DateSeparator date_separator_cpp;
-
-    switch (timestamp_format) {
-        case DMY: {
-            timestamp_format_cpp = Timestamp::TimestampFormat::DMY_DATE_ONLY;
-            break;
-        }
-        case MDY: {
-            timestamp_format_cpp = Timestamp::TimestampFormat::MDY_DATE_ONLY;
-            break;
-        }
-        case YMD: {
-            timestamp_format_cpp = Timestamp::TimestampFormat::YMD_DATE_ONLY;
-            break;
-        }
-        default:
-            return NULL;
-    }
-
-    switch (date_separator) {
-        case SLASH: {
-            date_separator_cpp = timestamp::Date::DateSeparator::SLASH;
-            break;
-        }
-        case BACKSLASH: {
-            date_separator_cpp = timestamp::Date::DateSeparator::BACKSLASH;
-            break;
-        }
-        case DOT: {
-            date_separator_cpp = timestamp::Date::DateSeparator::DOT;
-            break;
-        }
-        case DASH: {
-            date_separator_cpp = timestamp::Date::DateSeparator::DASH;
-            break;
-        }
-        default:
-            return NULL;
-    }
-
-    try {
-        return reinterpret_cast<timestamp_t>(new Timestamp(timestamp_format_cpp, date_separator_cpp));
-    } catch (...) {
-        return NULL;
-    }
-}
-
-EXPORT_C timestamp_t NewTimestampTimeOnly(TimeFormat time_format, Bool show_offset, Bool show_msec)
-{
-    timestamp::Time::TimeFormat time_format_cpp;
-    bool show_offset_cpp;
-    bool show_msec_cpp;
-
-    switch (time_format) {
-        case TIME_12_H_FORMAT: {
-            time_format_cpp = timestamp::Time::TimeFormat::TIME_12_H;
-            break;
-        }
-        case TIME_24_H_FORMAT: {
-            time_format_cpp = timestamp::Time::TimeFormat::TIME_24_H;
-            break;
-        }
-        default:
-            return NULL;
-    }
-
-    switch (show_offset) {
-        case FALSE: {
-            show_offset_cpp = false;
-            break;
-        }
-        case TRUE: {
-            show_offset_cpp = true;
-            break;
-        }
-        default:
-            return NULL;
-    }
-
-    switch (show_msec) {
-        case FALSE: {
-            show_msec_cpp = false;
-            break;
-        }
-        case TRUE: {
-            show_msec_cpp = true;
-            break;
-        }
-        default:
-            return NULL;
-    }
-
-    try {
-        return reinterpret_cast<timestamp_t>(new Timestamp(Timestamp::TimestampFormat::TIME_ONLY,
-                                time_format_cpp, show_offset_cpp, show_msec_cpp));
-    } catch (...) {
-        return NULL;
-    }
-}
-
-EXPORT_C timestamp_t NewTimestampRaw()
-{
-    try {
-        return reinterpret_cast<timestamp_t>(new Timestamp(Timestamp::TimestampFormat::RAW));
+        return reinterpret_cast<timestamp_t>(timestamp_builder.BuildPointer());
     } catch (...) {
         return NULL;
     }
