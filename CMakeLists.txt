@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.8.12)
 project (Timestamp)
 include(GNUInstallDirs)
 
@@ -38,9 +38,6 @@ macro(add_unit_test target target_test)
 endmacro(add_unit_test)
 
 add_test(NAME timestamp_test COMMAND ${TESTS_DIR}/timestamp_test)
-add_test(NAME time_test COMMAND ${TESTS_DIR}/time_test)
-add_test(NAME date_test COMMAND ${TESTS_DIR}/date_test)
-add_test(NAME raw_test COMMAND ${TESTS_DIR}/raw_test)
 
 #Define default library name
 if(NOT LIBRARY_NAME)
@@ -51,31 +48,18 @@ endif(NOT LIBRARY_NAME)
 if(PROJECT_LIBRARY_TYPE STREQUAL "Shared")
 add_library(${LIBRARY_NAME} SHARED
   ${TS_PROJECT_SOURCE_DIR}/c_api.cc
-  ${TS_PROJECT_SOURCE_DIR}/ts_date.cc
-  ${TS_PROJECT_SOURCE_DIR}/ts_raw.cc
-  ${TS_PROJECT_SOURCE_DIR}/ts_stamp.cc
-  ${TS_PROJECT_SOURCE_DIR}/ts_time.cc
-  ${TS_PROJECT_SOURCE_DIR}/ts_timestamp.cc
+  ${TS_PROJECT_SOURCE_DIR}/timestamp.cc
 )
 else()
   add_library(${LIBRARY_NAME} STATIC
   ${TS_PROJECT_SOURCE_DIR}/c_api.cc
-  ${TS_PROJECT_SOURCE_DIR}/ts_date.cc
-  ${TS_PROJECT_SOURCE_DIR}/ts_raw.cc
-  ${TS_PROJECT_SOURCE_DIR}/ts_stamp.cc
-  ${TS_PROJECT_SOURCE_DIR}/ts_time.cc
-  ${TS_PROJECT_SOURCE_DIR}/ts_timestamp.cc
+  ${TS_PROJECT_SOURCE_DIR}/timestamp.cc
 )
 endif()
 
 set(TS_HEADERS
  ${TS_PROJECT_INCLUDE_DIR}/c_api.h
  ${TS_PROJECT_INCLUDE_DIR}/timestamp.hh
- ${TS_PROJECT_INCLUDE_DIR}/ts_timestamp.hh
- ${TS_PROJECT_INCLUDE_DIR}/ts_stamp.hh
- ${TS_PROJECT_INCLUDE_DIR}/ts_time.hh
- ${TS_PROJECT_INCLUDE_DIR}/ts_raw.hh
- ${TS_PROJECT_INCLUDE_DIR}/ts_date.hh
 )
 
 #Test block added here as well in order to run the tests

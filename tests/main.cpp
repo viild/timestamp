@@ -3,9 +3,6 @@
 #include <cstdio>
 #include <iomanip>
 
-#include "time_test.hh"
-#include "date_test.hh"
-#include "raw_test.hh"
 #include "timestamp_test.hh"
 
 int countSuccessfull(std::string file, int res)
@@ -46,23 +43,14 @@ void printRunnig(std::string file)
 
 int main()
 {
-    int kUnitTestNum = 4;
+    const int kUnitTestNum = 1;
     int passed = 0;
 
     remove("all_unit_tests.log");
 
-    TimeUt time_test;
-    DateUt date_test;
-    RawUt raw_test;
     TimestampUt timestamp_test;
     std::cout << "Running " << kUnitTestNum << " unit test(s): " << std::endl;
 
-    printRunnig(time_test.returnFileName());
-    passed = countSuccessfull(time_test.returnFileName(), time_test.run());
-    printRunnig(date_test.returnFileName());
-    passed = countSuccessfull(date_test.returnFileName(), date_test.run());
-    printRunnig(raw_test.returnFileName());
-    passed = countSuccessfull(raw_test.returnFileName(), raw_test.run());
     printRunnig(timestamp_test.returnFileName());
     passed = countSuccessfull(timestamp_test.returnFileName(), timestamp_test.run());
 
