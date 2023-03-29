@@ -150,10 +150,12 @@ The project provides C API to work with the Timestamp class in C code. The heade
 
 In order to use Timestamp functionality one of the following procedures should be called to get the pointer:
 
+```
 timestamp_t NewTimestamp();
 timestamp_t NewTimestampSpecific(TimestampFormat_t timestamp_format, DateSeparator_t date_separator,
                                  TimeFormat_t time_format, TimeType_t time_type, TimeDateAppearance_t time_date_appearance,
                                  Bool show_utc_offset, Bool show_seconds, Bool show_milliseconds);
+```
 
 The parameters for these procedures should be used from specially designed enumerations for the C code:
 
