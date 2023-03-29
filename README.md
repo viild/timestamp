@@ -7,21 +7,20 @@ Timestamp can be built in different ways, it depends on provided parameters. The
 * TimeStamp Format
 * Date Separator
 * Time Format
+* Time Type
+* Time Date Appearance
 * Milliseconds appearance
 * UTC offset appearance
+* Seconds appearance
 
 ## Basic parameters
 ### TimeStamp format
 
 The project suuports the following TimeStamp formats:
 
-* [DMY] Day Month Year
-* [MDY] Month Day Year
-* [YMD] Year Month Day
-* [DMY_DATE_ONLY] Same as DMY but doesn't show time
-* [MDY_DATE_ONLY] Same as MDY but doesn't show time
-* [YMD_DATE_ONLY] Same as YMD but doesn't show time 
-* [TIME_ONLY] Shows time only, date is not shown
+* [DAY_MONTH_YEAR] Day Month Year
+* [MONTH_DAY_YEAR] Month Day Year
+* [YEAR_MONTH_DAY] Year Month Day
 * [RAW] Shows seconds from EPOCH
 
 ### Date Separator
@@ -35,10 +34,25 @@ The date in the timestamp can be separated with the following characters:
 
 ### Time Format
 
-There are 2 possible time formats. They are:
+There are 2 possible time formats:
 
 * [TIME_12_H] 12 hour time format, like 10 PM or 12 AM
 * [TIME_24_H] 24 hour time format, like 22:01 or 01:15
+
+### Time Type
+
+There are 2 possible time types:
+
+* [LOCAL] Shows local time where the project is used
+* [GMT] Shows GMT time
+
+### Time Date Appearance
+
+There are 2 possible time formats. They are:
+
+* [ALL] Shows both Date and Time
+* [TIME_ONLY] Shows Time only
+* [DATE_ONLY] Shows Date only
 
 ### Milliseconds appearance
 
@@ -46,15 +60,23 @@ Show or do not show milliseconds. Milliseconds are shown as 3 digit number.
 
 Example:
 
-10:27:02.275 PM
+10:27:02.**275** PM
 
 ### UTC offset appearance
 
-If set, the time is shown with some offset from the cuurent UTC.
+If set, the time is shown with some offset from the current UTC.
 
 Example:
 
-20:27:02.**278** UTC +0200
+30/03/2023 12:35 AM UTC +0200
+
+### Seconds appearance
+
+If set, seconds are added to the time.
+
+Example:
+
+12:35:**19** AM
 
 ## Configuring the project
 
@@ -90,37 +112,36 @@ The project provides both C++ and C access.
 
 ### C++
 
-The project introduces single class Timestamp with many constructors to setup desired format of the timestamp. The class uses internal classes Date, Time and Raw to build the timestamp based on the requirements. They can be used separately in an application instead of using common class. These internal classes are not hidden to run unit tests in each build. To be hidden from public usage.
+The project introduces single class Timestamp with additional class TimestampBuilder to setup desired format of the timestamp. 
 
-The parameters required for the class Timestamp listed above. The classes use unique pointers so the memory is cleaned automatically.
+The parameters required for the class Timestamp listed above.
 
 Example:
 
 Code:
 
 ```
-#include <wlc/timestamp/timestamp.h>
-#include <iostream>
+#include <stdio.h>
+#include <wlc/timestamp/timestamp.hh>
 
-int main(int argc, char *argv[])
+int main()
 {
-    Timestamp timestamp_1(Timestamp::TimestampFormat::DMY); /* DMY format with slash separation in date, the time in 24H format, without showing offset and milliseconds */
-    Timestamp timestamp_2(Timestamp::TimestampFormat::YMD, timestamp::Date::DateSeparator::BACKSLASH); /* YMD format with backslash separation in date, the time in 24H format, without showing offset and milliseconds */
-    Timestamp timestamp_3(Timestamp::TimestampFormat::MDY, timestamp::Date::DateSeparator::DOT, 
-                          timestamp::Time::TimeFormat::TIME_12_H, true, true); /* MDY format with dot separation in date, the time in 12H format, with showing offset and milliseconds */
-                          
-    std::cout << timestamp_1.Get() << std::endl;
-    std::cout << timestamp_2.Get() << std::endl;
-    std::cout << timestamp_3.Get() << std::endl;
+        Timestamp timestamp = Timestamp::TimestampBuilder().Build();
+        Timestamp timestamp_2 = Timestamp::TimestampBuilder().SetTimestampFormat(Timestamp::TimestampFormat::YEAR_MONTH_DAY).AddSeconds().Build();
+        Timestamp * timestamp_3 = Timestamp::TimestampBuilder().AddSeconds().AddMilliseconds().AddUtcOffset().BuildPointer();
+        printf("Current Date and Time %s\n", timestamp.Get().c_str());
+        printf("Current Date and Time %s\n", timestamp_2.Get().c_str());
+        printf("Current Date and Time %s\n", timestamp_3->Get().c_str());
+        delete timestamp_3;
 }
 ```
 
 Output:
 
 ```
-27/03/2023 13:58:03
-2023/03/27 13:58:03
-03.27.2023 01:58:03.822 PM UTC +0200
+Current Date and Time 30/03/2023 01:00
+Current Date and Time 2023/03/30 01:00:32
+Current Date and Time 30/03/2023 01:00:32.070 UTC +0200
 ```
 
 ### C
@@ -129,32 +150,43 @@ The project provides C API to work with the Timestamp class in C code. The heade
 
 In order to use Timestamp functionality one of the following procedures should be called to get the pointer:
 
-* NewTimestamp();
-* NewTimestampSpecific(TimestampFormat timestamp_format, DateSeparator date_separator, TimeFormat time_format, Bool show_offset, Bool show_msec);
-* NewTimestampDateOnly(TimestampFormat timestamp_format, DateSeparator date_separator);
-* NewTimestampTimeOnly(TimeFormat time_format, Bool show_offset, Bool show_msec);
-* NewTimestampRaw();
+timestamp_t NewTimestamp();
+timestamp_t NewTimestampSpecific(TimestampFormat_t timestamp_format, DateSeparator_t date_separator,
+                                 TimeFormat_t time_format, TimeType_t time_type, TimeDateAppearance_t time_date_appearance,
+                                 Bool show_utc_offset, Bool show_seconds, Bool show_milliseconds);
 
 The parameters for these procedures should be used from specially designed enumerations for the C code:
 
 ```
-typedef enum {
-  DMY,
-  MDY,
-  YMD
-} TimestampFormat;
+typedef enum TimestampFormat {
+    DAY_MONTH_YEAR,
+    MONTH_DAY_YEAR,
+    YEAR_MONTH_DAY,
+    RAW
+} TimestampFormat_t;
 
-typedef enum {
-  SLASH,
-  BACKSLASH,
-  DOT,
-  DASH
-} DateSeparator;
+typedef enum DateSeparator {
+    SLASH,
+    BACKSLASH,
+    DOT,
+    DASH
+} DateSeparator_t;
 
-typedef enum {
-  TIME_12_H_FORMAT,
-  TIME_24_H_FORMAT
-} TimeFormat;
+typedef enum TimeFormat {
+    TIME_12_H,
+    TIME_24_H
+} TimeFormat_t;
+
+typedef enum TimeType {
+    LOCAL,
+    GMT
+} TimeType_t;
+
+typedef enum TimeDateAppearance {
+    ALL,
+    TIME_ONLY,
+    DATE_ONLY
+} TimeDateAppearance_t;
 
 typedef enum {
   FALSE,
@@ -162,6 +194,6 @@ typedef enum {
 } Bool;
 ```
 
-Unlike C++, C pointers are not cleared automatically. In order to correctly clear the pointer, use the procedure FreeTimestamp(timestamp_t timestamp_ptr). It deletes Timestamp object in the library using "delete" keyword.
+C pointers are not cleared automatically. In order to correctly clear the pointer, use the procedure FreeTimestamp(timestamp_t timestamp_ptr). It deletes Timestamp object in the library using "delete" keyword.
 
 In order to print timestamp where it is necessary, use the procedure "GetTimestamp(timestamp_t tiemstamp_ptr)" where the only argument is the timestamp pointer. It returns C string limited with 64 characters including NULL at the end.
