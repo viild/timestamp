@@ -8,9 +8,12 @@ Timestamp::TimestampOptions & Timestamp::TimestampOptions::operator=(const Times
     time_format = timestamp_options.time_format;
     time_type = timestamp_options.time_type;
     time_date_appearance = timestamp_options.time_date_appearance;
+    month_as_text_type = timestamp_options.month_as_text_type;
+    day_as_text_type = timestamp_options.day_as_text_type;
     show_utc_offset = timestamp_options.show_utc_offset;
     show_seconds = timestamp_options.show_seconds;
     show_milliseconds = timestamp_options.show_milliseconds;
+    pattern = timestamp_options.pattern;
     return *this;
 }
 
@@ -27,9 +30,7 @@ Timestamp & Timestamp::operator=(const Timestamp & timestamp)
 const std::string Timestamp::Get() const
 {
     std::stringstream result;
-    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-    std::chrono::system_clock::duration tp = now.time_since_epoch();
-    time_t tt = std::chrono::system_clock::to_time_t(now);
+    tm TM = GetTm();
 
     switch (this->options.timestamp_format) {
         case TimestampFormat::DAY_MONTH_YEAR:
@@ -37,144 +38,81 @@ const std::string Timestamp::Get() const
         case TimestampFormat::YEAR_MONTH_DAY:
             switch (this->options.time_date_appearance) {
                 case TimeDateAppearance::ALL:
-                    result << GetDate(tt) << " " << GetTime(tt, tp);
+                    result << GetDate(TM) << " " << GetTime(TM);
                     return result.str();
                 case TimeDateAppearance::DATE_ONLY:
-                    return GetDate(tt);
+                    return GetDate(TM);
                 case TimeDateAppearance::TIME_ONLY:
-                    return GetTime(tt, tp);
+                    return GetTime(TM);
                 default:
                     throw std::invalid_argument( "Invalid time and date appearance" );
             }
             break;
         case TimestampFormat::RAW:
             return GetRaw();
+        case TimestampFormat::CUSTOM:
+            return ParsePattern(TM);
         default:
             throw std::invalid_argument( "Invalid date format" );
     }
 }
 
-const std::string Timestamp::GetTime(time_t & tt, std::chrono::system_clock::duration & tp) const
+const std::string Timestamp::GetTime(tm & TM) const
 {
-    using namespace std;
-    using namespace std::chrono;
-    /* Only for milliseconds calculation */
-    typedef duration<int, ratio_multiply<hours::period, ratio<24> >::type> days;
-    
-    days d = duration_cast<days>(tp);
-    tp -= d;
-    hours h = duration_cast<hours>(tp);
-    tp -= h;
-    minutes m = duration_cast<minutes>(tp);
-    tp -= m;
-    seconds s = duration_cast<seconds>(tp);
-    tp -= s;
-    milliseconds ms = duration_cast<milliseconds>(tp);
-    /*--------------------------------------------*/
-
-    tm local_gmt_time;
-    
-    switch (this->options.time_type) {
-        case TimeType::LOCAL:
-            local_gmt_time = *localtime(&tt);
-            break;
-        case TimeType::GMT:
-            local_gmt_time = *gmtime(&tt);
-            break;
-        default:
-            throw std::invalid_argument( "Invalid time type" );
-    }
-
-    int hours = local_gmt_time.tm_hour;
-    int mins = local_gmt_time.tm_min;
-    int offset = local_gmt_time.tm_gmtoff;
-    int secs = local_gmt_time.tm_sec;
-    int msec = ms.count();
-
-    char offset_char;
-    if (offset < 0)
-        offset_char = '-';
-    else
-        offset_char = '+';
-
-    int offset_hours = abs(offset / 3600);
-    int offset_mins = (abs(offset) - offset_hours * 3600) / 60;
+    std::stringstream string_stream;
+    int hours = TM.tm_hour;
+    int mins = TM.tm_min;
+    int secs = TM.tm_sec;
 
     std::pair<int, std::string> time_period = GetPeriod(hours);
-    std::stringstream string_stream;
 
-    switch (this->options.time_format) {
-        case TimeFormat::TIME_24_H: {
-            string_stream << Format(2, hours) << ":"
-                          << Format(2, mins);
-            break;
-        }
-        case TimeFormat::TIME_12_H: {
-            string_stream << Format(2, time_period.first) << ":"
-                          << Format(2, mins);
-            break;
-        }
-        default:
-            throw std::invalid_argument( "Time format is invalid" );
-    }
+    if (this->options.time_format == TimeFormat::TIME_12_H)
+        hours = time_period.first;
+
+    string_stream << PutHour(hours) << ":" << PutMinutes(mins);
 
     if (this->options.show_seconds)
-        string_stream << ":" << Format(2, secs);
+        string_stream << ":" << PutSeconds(secs);
 
     if (this->options.show_milliseconds)
-        string_stream << "." << Format(3, msec);
+        string_stream << "." << PutMilliseconds();
 
     if (this->options.time_format == TimeFormat::TIME_12_H) {
         string_stream << " " << time_period.second;
     }
 
     if (this->options.show_utc_offset)
-        string_stream << " UTC " << offset_char
-                      << Format(2, offset_hours)
-                      << Format(2, offset_mins);
+        string_stream << " UTC " << PutOffset(TM, false);
 
     return string_stream.str();    
 }
 
-const std::string Timestamp::GetDate(time_t & tt) const
+const std::string Timestamp::GetDate(tm & TM) const
 {
-    tm local_gmt_date;
-    
-    switch (this->options.time_type) {
-        case TimeType::LOCAL:
-            local_gmt_date = *localtime(&tt);
-            break;
-        case TimeType::GMT:
-            local_gmt_date = *gmtime(&tt);
-            break;
-        default:
-            throw std::invalid_argument( "Invalid time type" );
-    }
-
-    int day = local_gmt_date.tm_mday;
-    int month = local_gmt_date.tm_mon + 1;
-    int year = local_gmt_date.tm_year + 1900;
+    int day = TM.tm_mday;
+    int month = TM.tm_mon + 1;
+    int year = TM.tm_year + 1900;
 
     std::stringstream string_stream;
     std::string order[3];
 
      switch (this->options.timestamp_format) {
         case TimestampFormat::DAY_MONTH_YEAR: {
-            order[0] = Format(2, day);
-            order[1] = Format(2, month);
-            order[2] = Format(4, year);
+            order[0] = PutDay(day);
+            order[1] = (this->options.month_as_text_type != MonthAsTextType::NONE ? PutMonthAsText(month) : PutMonth(month));
+            order[2] = PutYear(year, 4);
             break;
         }
         case TimestampFormat::MONTH_DAY_YEAR: {
-            order[0] = Format(2, month);
-            order[1] = Format(2, day);
-            order[2] = Format(4, year);
+            order[0] = (this->options.month_as_text_type != MonthAsTextType::NONE ? PutMonthAsText(month) : PutMonth(month));
+            order[1] = PutDay(day);
+            order[2] = PutYear(year, 4);
             break;
         }
        case TimestampFormat::YEAR_MONTH_DAY: {
-            order[0] = Format(4, year);
-            order[1] = Format(2, month);
-            order[2] = Format(2, day);
+            order[0] = PutYear(year, 4);
+            order[1] = (this->options.month_as_text_type != MonthAsTextType::NONE ? PutMonthAsText(month) : PutMonth(month));
+            order[2] = PutDay(day);
             break;
         }
         default:
@@ -194,42 +132,117 @@ const std::string Timestamp::GetRaw() const
     return stamp.str();
 }
 
-const std::string Timestamp::SeparatorToChar() const
+const std::string Timestamp::ParsePattern(tm & TM) const
 {
-    switch (this->options.date_separator) {
-        case DateSeparator::DASH:
-            return "-";
-        case DateSeparator::SLASH:
-            return "/";
-        case DateSeparator::BACKSLASH:
-            return "\\";
-        case DateSeparator::DOT:
-            return ".";
-        default:
-            throw std::invalid_argument( "Invalid date separator" );
-    }
-}
-
-const std::string Timestamp::Format(const int n, const int value) const
-{
+    const int length = this->options.pattern.length();
     std::stringstream string_stream;
-    string_stream << std::setw(n) << std::setfill('0') << value;
-    return string_stream.str();
-}
 
-const std::pair<int, std::string> Timestamp::GetPeriod(const int hours) const
-{
-    if (hours == 0) {
-        return std::make_pair(12, "AM");
-    } else if (hours <= 11) {
-        return std::make_pair(hours, "AM");
-    } else if (hours == 12) {
-        return std::make_pair(12, "PM");
-    } else if (hours >= 13 && hours <= 23) {
-        return std::make_pair(hours-12, "PM");
+    const int year = TM.tm_year + 1900;
+    const int month = TM.tm_mon + 1;
+    const int day = TM.tm_mday;
+    const int week_day = TM.tm_wday;
+    const int year_day = TM.tm_yday + 1;
+    const int mins = TM.tm_min;
+    const int seconds = TM.tm_sec;
+    int hours = TM.tm_hour;
+
+    std::pair<int, std::string> time_period = GetPeriod(hours);
+
+    if (this->options.time_format == TimeFormat::TIME_12_H)
+        hours = time_period.first;
+
+    for (int i = 0; i < length; i++) {
+        switch (this->options.pattern[i]) {
+            case 'y':
+                if (i + 3 < length && this->options.pattern[i+1] == 'y' && this->options.pattern[i+2] == 'y'
+                            && this->options.pattern[i+3] == 'y') {
+                    string_stream << PutYear(year, 4);
+                    i+=3;
+                    continue;
+                } else if (i + 1 < length && this->options.pattern[i+1] == 'y') {
+                    string_stream << PutYear(year, 2);
+                    i++;
+                    continue;
+                } else {
+                    continue;
+                }
+            case 'd':
+                if (i + 1 < length && this->options.pattern[i+1] == 'd') {
+                    string_stream << PutDay(day);
+                    i++;
+                    continue;
+                } else {
+                    continue;
+                }
+            case 'M':
+                if (i + 1 < length && this->options.pattern[i+1] == 'M') {
+                    string_stream << PutMonth(month);
+                    i++;
+                    continue;
+                } else {
+                    continue;
+                }
+            case 'H':
+                if (i + 1 < length && this->options.pattern[i+1] == 'H') {
+                    string_stream << PutHour(hours);
+                    i++;
+                    continue;
+                } else {
+                    continue;
+                }
+            case 'm':
+                if (i + 1 < length && this->options.pattern[i+1] == 'm') {
+                    string_stream << PutMinutes(mins);
+                    i++;
+                    continue;
+                } else {
+                    continue;
+                }
+            case 's':
+                if (i + 1 < length && this->options.pattern[i+1] == 's') {
+                    string_stream << PutSeconds(seconds);
+                    i++;
+                    continue;
+                } else {
+                    continue;
+                }
+            case 'w':
+                string_stream << PutWeek(TM);
+                continue;
+            case 'S':
+                if (i + 2 < length && this->options.pattern[i+1] == 'S' && this->options.pattern[i+2] == 'S') {
+                    string_stream << PutMilliseconds();
+                    i+=2;
+                    continue;
+                } else {
+                    continue;
+                }
+            case 'D':
+                string_stream << std::string(std::to_string(year_day));
+                continue;
+            case 'E':
+                string_stream << PutWeekDay(week_day);
+                continue;
+            case 'a':
+                string_stream << (time_period.second);
+                continue;
+            case 'z':
+                if (i + 1 < length && this->options.pattern[i+1] == 'z') {
+                    string_stream << PutTimezone(TM, TimezoneType::SHORT);
+                    i++;
+                    continue;
+                } else {
+                    string_stream << PutTimezone(TM, TimezoneType::GMT_OFFSET);
+                    continue;
+                }
+            case 'Z':
+                string_stream << PutTimezone(TM, TimezoneType::OFFSET);
+                continue;
+            default:
+                string_stream << this->options.pattern[i];
+                continue;
+        }
     }
-    /* Should never happen */
-    assert(hours < 0 || hours > 23);
-    /* Default return to avoid compilation error */
-    return std::make_pair(-1, "Error");
+
+    return string_stream.str();
 }

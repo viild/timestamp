@@ -48,18 +48,20 @@ endif(NOT LIBRARY_NAME)
 if(PROJECT_LIBRARY_TYPE STREQUAL "Shared")
 add_library(${LIBRARY_NAME} SHARED
   ${TS_PROJECT_SOURCE_DIR}/c_api.cc
+  ${TS_PROJECT_SOURCE_DIR}/timestamp_aux.cc
   ${TS_PROJECT_SOURCE_DIR}/timestamp.cc
 )
 else()
   add_library(${LIBRARY_NAME} STATIC
   ${TS_PROJECT_SOURCE_DIR}/c_api.cc
+  ${TS_PROJECT_SOURCE_DIR}/timestamp_aux.cc
   ${TS_PROJECT_SOURCE_DIR}/timestamp.cc
 )
 endif()
 
 set(TS_HEADERS
- ${TS_PROJECT_INCLUDE_DIR}/c_api.h
- ${TS_PROJECT_INCLUDE_DIR}/timestamp.hh
+  ${TS_PROJECT_INCLUDE_DIR}/c_api.h
+  ${TS_PROJECT_INCLUDE_DIR}/timestamp.hh
 )
 
 #Test block added here as well in order to run the tests

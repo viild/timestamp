@@ -13,6 +13,7 @@ set (TEST_OUTPUT_BINS ${TEST_PROJECT_ROOT_DIR}/bins)
 
 set(TEST_SRCS
   ${TEST_PROJECT_SOURCE_DIR}/main.cpp
+  ${TIMESTAMP_DIR}/src/timestamp_aux.cc
   ${TIMESTAMP_DIR}/src/timestamp.cc
   ${TEST_PROJECT_SOURCE_DIR}/timestamp_test.cc
   ${TEST_PROJECT_SOURCE_DIR}/unit_test.cc
@@ -20,6 +21,7 @@ set(TEST_SRCS
 
 set(TIMESTAMP_UT_SRCS
   ${TEST_PROJECT_SOURCE_DIR}/timestamp_test.cc
+  ${TIMESTAMP_DIR}/src/timestamp_aux.cc
   ${TIMESTAMP_DIR}/src/timestamp.cc
   ${TEST_PROJECT_SOURCE_DIR}/unit_test.cc
 )
