@@ -47,15 +47,15 @@ endif(NOT LIBRARY_NAME)
 #Define type of the library
 if(PROJECT_LIBRARY_TYPE STREQUAL "Shared")
 add_library(${LIBRARY_NAME} SHARED
-  ${TS_PROJECT_SOURCE_DIR}/c_api.cc
   ${TS_PROJECT_SOURCE_DIR}/timestamp_aux.cc
   ${TS_PROJECT_SOURCE_DIR}/timestamp.cc
+  ${TS_PROJECT_SOURCE_DIR}/c_api.cc
 )
 else()
   add_library(${LIBRARY_NAME} STATIC
-  ${TS_PROJECT_SOURCE_DIR}/c_api.cc
   ${TS_PROJECT_SOURCE_DIR}/timestamp_aux.cc
   ${TS_PROJECT_SOURCE_DIR}/timestamp.cc
+  ${TS_PROJECT_SOURCE_DIR}/c_api.cc
 )
 endif()
 

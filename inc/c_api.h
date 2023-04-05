@@ -15,7 +15,7 @@
 
 #endif //-- End of __cplusplus definition //
 
-//============ C-interface for class Runstat ============//
+//============ C-interface ============//
 
 #define MAX_TIMESTAMP_SIZE 64
 
@@ -28,7 +28,8 @@ typedef enum TimestampFormat {
     DAY_MONTH_YEAR,
     MONTH_DAY_YEAR,
     YEAR_MONTH_DAY,
-    RAW
+    RAW,
+    CUSTOM
 } TimestampFormat_t;
 
 typedef enum DateSeparator {
@@ -54,14 +55,26 @@ typedef enum TimeDateAppearance {
     DATE_ONLY
 } TimeDateAppearance_t;
 
+typedef enum MonthAsTextType {
+    M_FULL,
+    M_SHORT,
+    M_NONE
+} MonthAsTextType_t;
+
+typedef enum DayAsTextType {
+    D_FULL,
+    D_SHORT
+} DayAsTextType_t;
+
 typedef enum {
-  FALSE,
-  TRUE
+    FALSE,
+    TRUE
 } Bool;
 
 EXPORT_C timestamp_t NewTimestamp();
 EXPORT_C timestamp_t NewTimestampSpecific(TimestampFormat_t timestamp_format, DateSeparator_t date_separator,
                                           TimeFormat_t time_format, TimeType_t time_type, TimeDateAppearance_t time_date_appearance,
+                                          MonthAsTextType_t month_as_text_type, DayAsTextType_t day_as_text_type, char * pattern,
                                           Bool show_utc_offset, Bool show_seconds, Bool show_milliseconds);
 EXPORT_C const char * GetTimestamp(timestamp_t tiemstamp_ptr);
 EXPORT_C void FreeTimestamp(timestamp_t timestamp_ptr);

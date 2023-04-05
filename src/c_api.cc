@@ -1,7 +1,7 @@
 #include "c_api.h"
 #include <cstring>
 
-timestamp_t NewTimestamp()
+EXPORT_C timestamp_t NewTimestamp()
 {
     try {
         return reinterpret_cast<timestamp_t>(Timestamp::TimestampBuilder().BuildPointer());
@@ -10,8 +10,9 @@ timestamp_t NewTimestamp()
     }
 }
 
-EXPORT_C timestamp_t NewTimestampSpecific(TimestampFormat timestamp_format, DateSeparator date_separator,
-                                          TimeFormat time_format, TimeType time_type, TimeDateAppearance time_date_appearance,
+EXPORT_C timestamp_t NewTimestampSpecific(TimestampFormat_t timestamp_format, DateSeparator_t date_separator,
+                                          TimeFormat_t time_format, TimeType_t time_type, TimeDateAppearance_t time_date_appearance,
+                                          MonthAsTextType_t month_as_text_type, DayAsTextType_t day_as_text_type, char * pattern,
                                           Bool show_utc_offset, Bool show_seconds, Bool show_milliseconds)
 {
 
@@ -20,6 +21,8 @@ EXPORT_C timestamp_t NewTimestampSpecific(TimestampFormat timestamp_format, Date
     Timestamp::TimeFormat time_format_cpp;
     Timestamp::TimeType time_type_cpp;
     Timestamp::TimeDateAppearance time_date_appearance_cpp;
+    Timestamp::MonthAsTextType month_as_text_type_cpp;
+    Timestamp::DayAsTextType day_as_text_type_cpp;
 
     switch (timestamp_format) {
         case DAY_MONTH_YEAR: {
@@ -36,6 +39,10 @@ EXPORT_C timestamp_t NewTimestampSpecific(TimestampFormat timestamp_format, Date
         }
         case RAW: {
             timestamp_format_cpp = Timestamp::TimestampFormat::RAW;
+            break;
+        }
+        case CUSTOM: {
+            timestamp_format_cpp = Timestamp::TimestampFormat::CUSTOM;
             break;
         }
         default:
@@ -106,9 +113,47 @@ EXPORT_C timestamp_t NewTimestampSpecific(TimestampFormat timestamp_format, Date
             return NULL;
     }
 
-    Timestamp::TimestampBuilder timestamp_builder = Timestamp::TimestampBuilder().SetTimestampFormat(timestamp_format_cpp).
-                SetDateSeparator(date_separator_cpp). SetTimeFormat(time_format_cpp).SetTimeType(time_type_cpp).
-                SetTimeDateAppearance(time_date_appearance_cpp);
+    switch (month_as_text_type) {
+        case M_FULL: {
+            month_as_text_type_cpp = Timestamp::MonthAsTextType::FULL;
+            break;
+        }
+        case M_SHORT: {
+            month_as_text_type_cpp = Timestamp::MonthAsTextType::SHORT;
+            break;
+        }
+        case M_NONE: {
+            month_as_text_type_cpp = Timestamp::MonthAsTextType::NONE;
+            break;
+        }
+        default:
+            return NULL;
+    }
+
+    switch (day_as_text_type) {
+        case D_FULL:  {
+            day_as_text_type_cpp = Timestamp::DayAsTextType::FULL;
+            break;
+        }
+        case D_SHORT: {
+            day_as_text_type_cpp = Timestamp::DayAsTextType::SHORT;
+            break;
+        }
+        default:
+            return NULL;
+    }
+
+    Timestamp::TimestampBuilder timestamp_builder = Timestamp::TimestampBuilder().
+                                                    SetTimestampFormat(timestamp_format_cpp).
+                                                    SetDateSeparator(date_separator_cpp).
+                                                    SetTimeFormat(time_format_cpp).
+                                                    SetTimeType(time_type_cpp).
+                                                    SetTimeDateAppearance(time_date_appearance_cpp).
+                                                    SetMonthAsTextType(month_as_text_type_cpp).
+                                                    SetDayAsTextType(day_as_text_type_cpp);
+
+    if (pattern)
+        timestamp_builder.SetPattern(pattern);
 
     if (show_utc_offset == TRUE)
         timestamp_builder.AddUtcOffset();
@@ -126,7 +171,7 @@ EXPORT_C timestamp_t NewTimestampSpecific(TimestampFormat timestamp_format, Date
     }
 }
 
-void FreeTimestamp(timestamp_t timestamp_ptr)
+EXPORT_C void FreeTimestamp(timestamp_t timestamp_ptr)
 {
     try {
         delete reinterpret_cast<Timestamp*>(timestamp_ptr);
@@ -135,7 +180,7 @@ void FreeTimestamp(timestamp_t timestamp_ptr)
     }
 }
 
-const char * GetTimestamp(timestamp_t timestamp_ptr)
+EXPORT_C const char * GetTimestamp(timestamp_t timestamp_ptr)
 {
     static char result[MAX_TIMESTAMP_SIZE];
 
