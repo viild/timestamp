@@ -1,27 +1,23 @@
 # TimeStamp project
 ## Description
-This projects allows to build timestamp according to a desired format. It provides dynamic and static libraries that can be included in any code that runs on Linux.
 
-Timestamp can be built in different ways, it depends on provided parameters. The basic ones are:
+The class Timestamp provides possibility to print timestamp in desired format. The project provides dynamic and static libraries that can be included in C and C++ code on Linux OS. The project is written on C++ but can be used in C code with C API.
 
-* TimeStamp Format
-* Date Separator
-* Time Format
-* Time Type
-* Time Date Appearance
-* Milliseconds appearance
-* UTC offset appearance
-* Seconds appearance
+There are 2 ways to use the project:
 
-## Basic parameters
+* Use pre-defined types with different options
+* Build custom timestamp based on pattern rules
+
+## Types and options
 ### TimeStamp format
 
 The project suuports the following TimeStamp formats:
 
-* [DAY_MONTH_YEAR] Day Month Year
-* [MONTH_DAY_YEAR] Month Day Year
-* [YEAR_MONTH_DAY] Year Month Day
-* [RAW] Shows seconds from EPOCH
+* [DAY_MONTH_YEAR] Date will be printed in the order "Day, Month, Year"
+* [MONTH_DAY_YEAR] Date will be printed in the order "Month, Day, Year"
+* [YEAR_MONTH_DAY] Date will be printed in the order "Year, Month, Day"
+* [RAW] Timestamp is printed as integer value as seconds since EPOCH
+* [CUSTOM] Timestamp will depend on the provided pattern
 
 ### Date Separator
 
@@ -43,8 +39,8 @@ There are 2 possible time formats:
 
 There are 2 possible time types:
 
-* [LOCAL] Shows local time where the project is used
-* [GMT] Shows GMT time
+* [LOCAL] Returns local time where the project is used
+* [GMT] Returns GMT time
 
 ### Time Date Appearance
 
@@ -53,6 +49,23 @@ There are 2 possible time formats. They are:
 * [ALL] Shows both Date and Time
 * [TIME_ONLY] Shows Time only
 * [DATE_ONLY] Shows Date only
+
+### Month As Text Type
+
+By default month is printed as 2 digit number but can be printed as text in different formats:
+
+* [FULL/M_FULL]  Month is printed in full
+* [SHORT/M_SHORT] Month is printed in short
+* [NONE/M_NONE] Prints 2 digit number by default
+
+The prefix "M_" is for C API code.
+
+### Day As Text Type
+
+This parameter is only used in CUSTOM timestamp. Pre-defined timestamps do not provide week day.
+
+* [FULL/D_FULL] Day is printed in full
+* [SHORT/D_SHORT] Day is printed in full
 
 ### Milliseconds appearance
 
@@ -121,27 +134,56 @@ Example:
 Code:
 
 ```
-#include <stdio.h>
-#include <wlc/timestamp/timestamp.hh>
+/* Custom TimeStamp in 12H time format and show full day of the week */
+Timestamp timestamp = Timestamp::TimestampBuilder().SetTimestampFormat(Timestamp::TimestampFormat::CUSTOM).
+                                                    SetPattern("E dd-MM-yyyy HH:mm a").
+                                                    SetTimeFormat(Timestamp::TimeFormat::TIME_12_H).
+                                                    SetDayAsTextType(Timestamp::DayAsTextType::FULL).
+                                                    Build();
+std::cout << "Custom TimeStamp in 12H time format and day of the week = " << timestamp.Get().c_str() << std::endl;
 
-int main()
-{
-        Timestamp timestamp = Timestamp::TimestampBuilder().Build();
-        Timestamp timestamp_2 = Timestamp::TimestampBuilder().SetTimestampFormat(Timestamp::TimestampFormat::YEAR_MONTH_DAY).AddSeconds().Build();
-        Timestamp * timestamp_3 = Timestamp::TimestampBuilder().AddSeconds().AddMilliseconds().AddUtcOffset().BuildPointer();
-        printf("Current Date and Time %s\n", timestamp.Get().c_str());
-        printf("Current Date and Time %s\n", timestamp_2.Get().c_str());
-        printf("Current Date and Time %s\n", timestamp_3->Get().c_str());
-        delete timestamp_3;
-}
+/* Custom TimeStamp in 24H time format, current week, seconds and milliseconds */
+/* TODO: format either should be followed by some specifier or text should be somehow separated */
+Timestamp timestamp2 = Timestamp::TimestampBuilder().SetTimestampFormat(Timestamp::TimestampFormat::CUSTOM).
+                                                        SetPattern("Week w dd-MM-yyyy HH:mm:ss.SSS").
+                                                        SetTimeFormat(Timestamp::TimeFormat::TIME_24_H).
+                                                        Build();
+std::cout << "Custom TimeStamp in 24H time format, current week, seconds and milliseconds = " << timestamp2.Get().c_str() << std::endl;
+
+/* Default custom TimeStamp */
+Timestamp timestamp3 = Timestamp::TimestampBuilder().SetTimestampFormat(Timestamp::TimestampFormat::CUSTOM).Build();
+std::cout << "Default custom TimeStamp = " << timestamp3.Get().c_str() << std::endl;
+
+
+/* Pre-defined Year Month Day format, with seconds, milliseconds and offset */
+Timestamp timestamp4 = Timestamp::TimestampBuilder().SetTimestampFormat(Timestamp::TimestampFormat::YEAR_MONTH_DAY).
+                                                        AddSeconds().
+                                                        AddMilliseconds().
+                                                        AddUtcOffset().
+                                                        Build();
+std::cout << "Pre-defined Year Month Day format, with seconds, milliseconds and offset = " << timestamp4.Get().c_str() << std::endl;
+
+/* Month Day Year, Date only with Dash separator */
+Timestamp timestamp5 = Timestamp::TimestampBuilder().SetTimestampFormat(Timestamp::TimestampFormat::MONTH_DAY_YEAR).
+                                                        SetTimeDateAppearance(Timestamp::TimeDateAppearance::DATE_ONLY).
+                                                        SetDateSeparator(Timestamp::DateSeparator::DASH).
+                                                        Build();
+std::cout << "Month Day Year, Date only with Dash separator = " << timestamp5.Get().c_str() << std::endl;
+
+/* Default timestamp */
+Timestamp timestamp6 = Timestamp::TimestampBuilder().Build();
+std::cout << "Default timestamp = " << timestamp6.Get().c_str() << std::endl;
 ```
 
 Output:
 
 ```
-Current Date and Time 30/03/2023 01:00
-Current Date and Time 2023/03/30 01:00:32
-Current Date and Time 30/03/2023 01:00:32.070 UTC +0200
+Custom TimeStamp in 12H time format and day of the week = Wednesday 05-04-2023 09:03 PM
+Custom TimeStamp in 24H time format, current week, seconds and milliseconds = Week 14 05-04-2023 21:03:17.409
+Default custom TimeStamp = 05-04-2023 21:03:17
+Pre-defined Year Month Day format, with seconds, milliseconds and offset = 2023/04/05 21:03:17.410 UTC +0200
+Month Day Year, Date only with Dash separator = 04-05-2023
+Default timestamp = 05/04/2023 21:03
 ```
 
 ### C
@@ -150,11 +192,65 @@ The project provides C API to work with the Timestamp class in C code. The heade
 
 In order to use Timestamp functionality one of the following procedures should be called to get the pointer:
 
+Example:
+
+Code:
+
 ```
-timestamp_t NewTimestamp();
-timestamp_t NewTimestampSpecific(TimestampFormat_t timestamp_format, DateSeparator_t date_separator,
-                                 TimeFormat_t time_format, TimeType_t time_type, TimeDateAppearance_t time_date_appearance,
-                                 Bool show_utc_offset, Bool show_seconds, Bool show_milliseconds);
+/* Custom TimeStamp in 12H time format and show full day of the week */
+timestamp_t timestamp = NewTimestampSpecific(CUSTOM, SLASH, TIME_12_H, LOCAL,
+                                                ALL, M_NONE, D_FULL, "E dd-MM-yyyy HH:mm a",
+                                                FALSE, FALSE, FALSE);
+printf("Custom TimeStamp in 12H time format and day of the week = %s\n", GetTimestamp(timestamp));
+FreeTimestamp(timestamp);
+
+/* Custom TimeStamp in 24H time format, current week, seconds and milliseconds */
+/* TODO: format either should be followed by some specifier or text should be somehow separated */
+timestamp_t timestamp2 = NewTimestampSpecific(CUSTOM, SLASH, TIME_24_H, LOCAL,
+                                                ALL, M_NONE, D_FULL, "Week w dd-MM-yyyy HH:mm:ss.SSS",
+                                                FALSE, FALSE, FALSE);
+printf("Custom TimeStamp in 24H time format, current week, seconds and milliseconds = %s\n", GetTimestamp(timestamp2));
+FreeTimestamp(timestamp2);
+
+/* Default custom TimeStamp */
+timestamp_t timestamp3 = NewTimestampSpecific(CUSTOM, SLASH, TIME_24_H, LOCAL,
+                                                ALL, M_NONE, D_FULL, "dd-MM-yyyy HH:mm:ss",
+                                                FALSE, FALSE, FALSE);
+printf("Default custom TimeStamp = %s\n", GetTimestamp(timestamp3));
+FreeTimestamp(timestamp3);
+
+
+/* Pre-defined Year Month Day format, with seconds, milliseconds and offset */
+timestamp_t timestamp4 = NewTimestampSpecific(YEAR_MONTH_DAY, SLASH, TIME_24_H, LOCAL,
+                                                ALL, M_NONE, D_FULL, "dd-MM-yyyy HH:mm:ss",
+                                                TRUE, TRUE, TRUE);
+printf("Pre-defined Year Month Day format, with seconds, milliseconds and offset = %s\n", GetTimestamp(timestamp4));
+FreeTimestamp(timestamp4);
+
+/* Month Day Year, Date only with Dash separator */
+timestamp_t timestamp5 = NewTimestampSpecific(MONTH_DAY_YEAR, DASH, TIME_24_H, LOCAL,
+                                                DATE_ONLY, M_NONE, D_FULL, "dd-MM-yyyy HH:mm:ss",
+                                                FALSE, FALSE, FALSE);
+printf("Month Day Year, Date only with Dash separator = %s\n", GetTimestamp(timestamp5));
+FreeTimestamp(timestamp5);
+
+/* Default timestamp */
+timestamp_t timestamp6 = NewTimestampSpecific(DAY_MONTH_YEAR, SLASH, TIME_24_H, LOCAL,
+                                                ALL, M_NONE, D_FULL, "dd-MM-yyyy HH:mm:ss",
+                                                FALSE, FALSE, FALSE);
+printf("Default timestamp = %s\n", GetTimestamp(timestamp6));
+FreeTimestamp(timestamp6);
+```
+
+Output:
+
+```
+Custom TimeStamp in 12H time format and day of the week = Wednesday 05-04-2023 09:06 PM
+Custom TimeStamp in 24H time format, current week, seconds and milliseconds = Week 14 05-04-2023 21:06:11.121
+Default custom TimeStamp = 05-04-2023 21:06:11
+Pre-defined Year Month Day format, with seconds, milliseconds and offset = 2023/04/05 21:06:11.121 UTC +0200
+Month Day Year, Date only with Dash separator = 04-05-2023
+Default timestamp = 05/04/2023 21:06
 ```
 
 The parameters for these procedures should be used from specially designed enumerations for the C code:
@@ -164,7 +260,8 @@ typedef enum TimestampFormat {
     DAY_MONTH_YEAR,
     MONTH_DAY_YEAR,
     YEAR_MONTH_DAY,
-    RAW
+    RAW,
+    CUSTOM
 } TimestampFormat_t;
 
 typedef enum DateSeparator {
@@ -190,12 +287,27 @@ typedef enum TimeDateAppearance {
     DATE_ONLY
 } TimeDateAppearance_t;
 
+typedef enum MonthAsTextType {
+    M_FULL,
+    M_SHORT,
+    M_NONE
+} MonthAsTextType_t;
+
+typedef enum DayAsTextType {
+    D_FULL,
+    D_SHORT
+} DayAsTextType_t;
+
 typedef enum {
-  FALSE,
-  TRUE
+    FALSE,
+    TRUE
 } Bool;
 ```
 
 C pointers are not cleared automatically. In order to correctly clear the pointer, use the procedure FreeTimestamp(timestamp_t timestamp_ptr). It deletes Timestamp object in the library using "delete" keyword.
 
 In order to print timestamp where it is necessary, use the procedure "GetTimestamp(timestamp_t tiemstamp_ptr)" where the only argument is the timestamp pointer. It returns C string limited with 64 characters including NULL at the end.
+
+## Know issues
+
+Static library doesn't work with C code.
