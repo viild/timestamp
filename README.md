@@ -311,3 +311,24 @@ In order to print timestamp where it is necessary, use the procedure "GetTimesta
 ## Know issues
 
 Static library doesn't work with C code.
+
+## Building pattern
+
+* "yy" - prints year as 2 digits
+* "yyyy" - prints year as 4 digits
+* "dd" - prints day 2 digit number of month
+* "MM" - prints month number as 2 digits
+* "HH" - prints hour as 2 digits
+* "mm" - prints minutes as 2 digits
+* "ss" - prints seconds as 2 digits
+* "w" - prints week of the year. When week number is the week from previous year, it will print week number in the format "week/year"
+* "SSS" - prints milliseconds as 3 digits
+* "D" - prints current day of the year
+* "E" - prints day of the year. It can be printed either in full format or short format
+* "a" - AM/PM marker
+* "zz" - Short format of time zone
+* "z" - Offset of GMT time
+* "Z" - just offset
+
+When a combination is not possible then the symbol is ignored, like when "yyy" is used then the year will be printed as 2 digits but the last "y" will be ignored.
+When nothing matches the pattern, the symbol is just printed.
